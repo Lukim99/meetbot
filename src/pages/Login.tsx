@@ -12,6 +12,11 @@ export default function Login() {
 
   const [step, setStep] = useState<'name' | 'code'>('name')
   const [name, setName] = useState('')
+
+  const handleNameChange = (value: string) => {
+    const filtered = value.replace(/[^ㄱ-ㅎ가-힣a-zA-Z0-9_.]/g, '')
+    setName(filtered)
+  }
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -43,28 +48,38 @@ export default function Login() {
 
       <div className="relative w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[--color-accent]/15 ring-1 ring-[--color-accent]/25">
-            <Bot size={22} className="text-[--color-accent]" />
+          <div
+            className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl"
+            style={{ background: 'linear-gradient(135deg,#818cf8,#6366f1)', boxShadow: '0 4px 20px rgba(129,140,248,0.35)' }}
+          >
+            <Bot size={22} className="text-white" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-[--color-text]">모임봇</h1>
-          <p className="mt-1.5 text-sm text-[--color-text-muted]">유저/모임 관리 시스템</p>
+          <h1 className="text-xl font-bold tracking-tight text-[--color-text]">월루</h1>
+          <p className="mt-1.5 text-sm text-[--color-text-muted]">서울·경기 반말방</p>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="flex flex-col gap-4 rounded-2xl border border-[--color-border] bg-[--color-surface] p-6"
+          className="flex flex-col gap-4 rounded-2xl bg-[--color-surface] p-6 shadow-[0_4px_32px_rgba(0,0,0,0.5)]"
+          style={{ border: '1px solid rgba(255,255,255,0.07)' }}
         >
           <div>
             <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">
-              이름
+              로그인
             </label>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="이름을 입력하세요"
-              disabled={step === 'code' || loading}
-              autoFocus
-            />
+            <div className="relative">
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-[--color-text-muted]">
+                @
+              </span>
+              <Input
+                value={name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder="핸들을 입력하세요"
+                disabled={step === 'code' || loading}
+                autoFocus
+                className="pl-7"
+              />
+            </div>
           </div>
 
           {step === 'code' && (

@@ -54,16 +54,23 @@ export interface TitleItem {
 export interface Meeting {
   id: string
   name: string
-  date: string
+  date: string              // "YYYY-MM-DD", kept for compat
+  start_time: string | null // ISO timestamptz
+  end_time: string | null   // ISO timestamptz (null = single-day or open-ended)
   description: string | null
   created_by: string
+  host_id: string | null    // first joiner, or creator if they joined on creation
   settled: boolean
+  min_members: number | null
+  max_members: number | null
+  deadline: string | null   // ISO timestamptz — registration closes at this time
   created_at: string
 }
 
 export interface MeetingMember {
   meeting_id: string
   user_id: string
+  joined_at: string
 }
 
 export interface MeetingItem {

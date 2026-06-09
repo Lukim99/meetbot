@@ -14,20 +14,29 @@ export function MobileLayout() {
         <main className="min-w-0 flex-1 overflow-y-auto pb-20">
           <Outlet />
         </main>
-        <nav className="fixed bottom-0 left-0 right-0 z-40 flex border-t border-[--color-border] bg-[--color-surface]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
+
+        <nav
+          className="fixed bottom-0 left-0 right-0 z-40 flex pb-[env(safe-area-inset-bottom)]"
+          style={{
+            background: 'rgba(22,26,38,0.92)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+          }}
+        >
           {items.map(({ label, icon: Icon, path }) => (
             <NavLink key={path} to={toPath(path, true)} className="flex flex-1 min-h-16">
               {({ isActive }) => (
                 <div
                   className={cn(
-                    'flex flex-1 flex-col items-center justify-center gap-1.5 py-2 transition-colors',
+                    'flex flex-1 flex-col items-center justify-center gap-1 py-2 transition-colors',
                     isActive ? 'text-[--color-accent]' : 'text-[--color-text-muted]',
                   )}
                 >
                   <span
                     className={cn(
-                      'flex h-7 w-11 items-center justify-center rounded-full transition-all duration-200',
-                      isActive ? 'bg-[--color-accent]/10' : '',
+                      'flex h-7 w-12 items-center justify-center rounded-full transition-all duration-200',
+                      isActive && 'bg-[--color-accent]/[.12]',
                     )}
                   >
                     <Icon size={20} />

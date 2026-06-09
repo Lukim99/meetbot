@@ -17,10 +17,11 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md mx-4 max-h-[85vh] overflow-y-auto bg-[--color-surface] border border-[--color-border] rounded-2xl shadow-2xl"
+        className="mx-4 w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl shadow-2xl"
+        style={{ background: 'var(--color-surface)', border: '1px solid rgba(255,255,255,0.08)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-[--color-border] px-5 py-4">
+        <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <h2 className="text-base font-medium text-[--color-text]">{title}</h2>
           <button
             type="button"
@@ -33,7 +34,7 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
         </div>
         <div className="p-5">{children}</div>
         {footer && (
-          <div className="flex justify-end gap-2 border-t border-[--color-border] px-5 py-4">
+          <div className="flex justify-end gap-2 px-5 py-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             {footer}
           </div>
         )}

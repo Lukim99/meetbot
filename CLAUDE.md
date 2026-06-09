@@ -2,7 +2,7 @@
 
 ## Project Purpose
 
-A web application that surfaces data collected by a KakaoTalk bot (entry/exit events, nickname changes, message counts) stored in Supabase. The web app lets users view stats and manage their profiles, and lets admins manage welcome messages, auto-reply commands, and group settlements.
+A web application that surfaces data collected by a KakaoTalk bot (entry/exit events, nickname changes, message counts) stored in Supabase. The web app lets users view stats and manage their profiles, and lets admins manage welcome messages, auto-reply commands, group settlements, and title assignments.
 
 **KakaoTalk bot is out of scope.** It writes to Supabase; this app only reads/writes via the Supabase JS client.
 
@@ -12,7 +12,7 @@ A web application that surfaces data collected by a KakaoTalk bot (entry/exit ev
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Build | Vite 8 + React 19 + TypeScript 6 | already scaffolded |
+| Build | Vite + React 19 + TypeScript | already scaffolded |
 | Styling | Tailwind CSS v4 (`@tailwindcss/vite`) | CSS-first config, no tailwind.config.js |
 | Routing | `react-router-dom` v7 | `/m/*` for mobile, bare paths for PC |
 | State | `zustand` | auth store only |
@@ -20,31 +20,28 @@ A web application that surfaces data collected by a KakaoTalk bot (entry/exit ev
 | Icons | `lucide-react` | consistent icon set |
 | React Compiler | already enabled via babel preset | keep as-is |
 
-**Install command (run once):**
-```
-npm install react-router-dom @supabase/supabase-js zustand lucide-react
-npm install -D @tailwindcss/vite
-```
+**vite.config.ts** — plugins: `react()`, `babel({ presets: [reactCompilerPreset()] })`, `tailwindcss()`
 
-**vite.config.ts** — add `@tailwindcss/vite` plugin:
-```ts
-import tailwindcss from '@tailwindcss/vite'
-// add tailwindcss() to plugins array alongside existing react() and babel()
-```
-
-**src/index.css** — Tailwind v4 entry (replaces existing content):
+**src/index.css** — actual current theme:
 ```css
 @import "tailwindcss";
 
 @theme {
-  --color-accent: #00FFBF;
-  --color-accent-dim: #00cc99;
-  --color-bg: #0f0f0f;
-  --color-surface: #1a1a1a;
-  --color-surface-2: #242424;
-  --color-border: #2e2e2e;
-  --color-text: #f0f0f0;
-  --color-text-muted: #888888;
+  --color-accent:     #818cf8;
+  --color-accent-dim: #6366f1;
+  --color-bg:         #0f1117;
+  --color-surface:    #161a26;
+  --color-surface-2:  #1e2336;
+  --color-border:     #272d42;
+  --color-text:       #dce4f5;
+  --color-text-muted: #6b7899;
+}
+
+body {
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: 14px;
 }
 ```
 
@@ -52,68 +49,69 @@ import tailwindcss from '@tailwindcss/vite'
 
 ## Design System
 
-### Colors (always use these CSS variables or Tailwind class equivalents)
+### Colors (always use these CSS variables)
 
 | Token | Value | Usage |
 |---|---|---|
-| `--color-accent` | `#00FFBF` | primary buttons, active states, badges, highlights |
-| `--color-accent-dim` | `#00cc99` | hover state of accent |
-| `--color-bg` | `#0f0f0f` | page background |
-| `--color-surface` | `#1a1a1a` | cards, sidebar, modals |
-| `--color-surface-2` | `#242424` | inputs, table rows, nested surfaces |
-| `--color-border` | `#2e2e2e` | all borders and dividers |
-| `--color-text` | `#f0f0f0` | primary text |
-| `--color-text-muted` | `#888888` | secondary text, labels, placeholders |
+| `--color-accent` | `#818cf8` | primary buttons, active states, badges, highlights |
+| `--color-accent-dim` | `#6366f1` | gradient end / hover state |
+| `--color-bg` | `#0f1117` | page background |
+| `--color-surface` | `#161a26` | cards, sidebar, modals |
+| `--color-surface-2` | `#1e2336` | inputs, table rows, nested surfaces |
+| `--color-border` | `#272d42` | fallback borders (prefer `rgba(255,255,255,0.06)` inline) |
+| `--color-text` | `#dce4f5` | primary text |
+| `--color-text-muted` | `#6b7899` | secondary text, labels, placeholders |
 
-**Rule:** dark background (#0f0f0f) everywhere. No light mode. Accent (#00FFBF) is the only vivid color — use it sparingly for emphasis.
+**Rule:** Very dark background everywhere. No light mode. Accent (#818cf8) is bright indigo — use it sparingly. Borders should feel nearly invisible; prefer `rgba(255,255,255,0.06~0.10)` inline style for structural dividers rather than `border-[--color-border]`.
+
+**CSS variable + background caveat:** `bg-[--color-accent]` may not generate CSS reliably in all Tailwind v4 build configurations. For critical background fills (e.g. today's date circle), prefer `style={{ backgroundColor: 'var(--color-accent)' }}` inline. Text/border/ring classes using CSS vars are fine.
 
 ### Typography
-- Font: system-ui / `-apple-system` stack (no external fonts)
+- Font: Pretendard Variable (loaded via CSS; falls back to system-ui)
 - Base size: 14px (Tailwind `text-sm`)
-- Headings: `text-lg font-semibold` for page titles, `text-base font-medium` for section titles
+- Headings: `text-xl font-bold` for page titles, `text-base font-semibold` for section titles
 - Muted labels: `text-xs text-[--color-text-muted]`
 
 ### Spacing & Shape
 - Card border radius: `rounded-xl` (12px)
 - Input/button border radius: `rounded-lg` (8px)
 - Consistent padding inside cards: `p-4` or `p-5`
-- Sidebar width (PC): `w-56` (224px), collapsed: `w-14`
+- Sidebar width (PC): `w-56` (224px)
 
 ### Icons & Emoji
 
-**Use icons, not emoji.** A clean, modern, refined look comes from a consistent monochrome icon set — never from emoji.
+**Use icons, not emoji.** A clean, modern, refined look comes from a consistent monochrome icon set.
 
 - All icons come from `lucide-react`. One library, one visual language.
-- Default icon size: `size={18}` inline with text, `size={20}` for nav/standalone, `size={16}` for dense tables/badges.
-- Icon color follows text: `text-[--color-text-muted]` by default, `text-[--color-accent]` when active/emphasized. Do not give icons their own colors.
-- **Do not use emoji anywhere in the UI chrome** — no 🥇🎉✅⚠️🔥 in buttons, headers, labels, badges, toasts, or empty states. Replace each with a lucide icon:
-  - rank/medal → `Medal`, `Crown`, `Trophy` (or a styled numeric badge — see Ranking spec)
+- Default icon size: `size={16}` inline with text, `size={20}` for nav/standalone.
+- Icon color follows text: `text-[--color-text-muted]` by default, `text-[--color-accent]` when active.
+- **Do not use emoji in UI chrome.** Replace with lucide icons:
+  - rank/medal → `Medal`, `Crown`, `Trophy`
   - success → `Check` / `CheckCircle2`
   - warning/error → `AlertTriangle` / `XCircle`
-  - celebration → omit entirely; use a `Sparkles` icon only if truly needed
-  - empty state → a single muted lucide icon (e.g. `Inbox`, `SearchX`) above the message
-- The only place emoji may appear is **user-authored content** stored in the DB (a user's nickname, a welcome message an admin typed). Never inject emoji ourselves.
-- Icons must always be paired with a text label or an `aria-label` — never an icon alone with no accessible name.
+  - empty state → a single muted lucide icon (e.g. `Inbox`, `CalendarDays`)
+- Emoji only allowed in user-authored content stored in DB.
+- Icons must always have a text label or `aria-label`.
 
-### Component Patterns (implement in `src/components/ui/`)
-
-Every UI primitive must follow these exact patterns. Do not deviate.
+### Component Patterns (`src/components/ui/`)
 
 **Button:**
-- Variant `primary`: `bg-[--color-accent] text-black font-semibold hover:bg-[--color-accent-dim]`
-- Variant `ghost`: `bg-transparent border border-[--color-border] text-[--color-text] hover:bg-[--color-surface-2]`
-- Variant `danger`: `bg-transparent border border-red-800 text-red-400 hover:bg-red-900/20`
-- All buttons: `rounded-lg px-4 py-2 text-sm transition-colors cursor-pointer`
+- Variant `primary`: gradient `from-[#818cf8] to-[#6366f1]`, `text-white font-semibold`, glow shadow, `hover:brightness-[1.07]`
+- Variant `ghost`: `bg-white/[.04] border border-white/10 text-[--color-text] hover:bg-white/[.08] hover:border-white/[.18]`
+- Variant `danger`: `bg-red-500/[.08] border border-red-500/25 text-red-400 hover:bg-red-500/[.14]`
+- All buttons: `rounded-lg px-4 py-2 text-sm transition-all cursor-pointer disabled:opacity-40`
 
 **Input:**
-- `bg-[--color-surface-2] border border-[--color-border] rounded-lg px-3 py-2 text-sm text-[--color-text] placeholder:text-[--color-text-muted] focus:outline-none focus:border-[--color-accent] transition-colors w-full`
+- `bg-[--color-surface-2] border border-white/[.07] rounded-lg px-3 py-2.5 text-sm text-[--color-text] placeholder:text-[--color-text-muted] focus:outline-none focus:border-[--color-accent] focus:ring-2 focus:ring-[--color-accent]/[.12] transition-all w-full`
 
 **Card:**
-- `bg-[--color-surface] border border-[--color-border] rounded-xl p-5`
+- `bg-[--color-surface] border border-white/[.06] rounded-xl p-5 shadow-[0_1px_4px_rgba(0,0,0,0.35)]`
 
 **Badge:**
 - Accent: `bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20 rounded-full px-2 py-0.5 text-xs font-medium`
 - Neutral: `bg-[--color-surface-2] text-[--color-text-muted] rounded-full px-2 py-0.5 text-xs`
+- Warning: `bg-orange-500/10 text-orange-400 border border-orange-500/20 ...`
+- Success: `bg-green-500/10 text-green-400 border border-green-500/20 ...`
 
 **Table:**
 - `w-full text-sm` with `thead` using `text-[--color-text-muted] text-xs uppercase border-b border-[--color-border]`
@@ -128,26 +126,36 @@ Every UI primitive must follow these exact patterns. Do not deviate.
 src/
 ├── lib/
 │   ├── supabase.ts       # Supabase client singleton
-│   └── auth.ts           # login(), logout(), checkUA() helpers
+│   ├── auth.ts           # login(), logout() helpers
+│   ├── format.ts         # formatDate, formatDateTime, formatBirthday
+│   ├── cn.ts             # clsx/twMerge helper
+│   └── layoutContext.ts  # LayoutContext for isMobile
 ├── store/
 │   └── authStore.ts      # zustand store: { user, setUser, clear }
 ├── types/
 │   └── index.ts          # All TypeScript types
 ├── hooks/
-│   ├── useAuth.ts        # reads authStore, exposes isAdmin
+│   ├── useAuth.ts        # reads authStore, exposes isAdmin, isOwner
 │   ├── useUser.ts        # fetch single user by id
 │   └── useIsMobile.ts    # reads LayoutContext; true under /m/* layout
 ├── components/
 │   ├── layout/
-│   │   ├── PCLayout.tsx      # sidebar + topbar wrapper
+│   │   ├── PCLayout.tsx      # sidebar + main wrapper
 │   │   ├── MobileLayout.tsx  # bottom tab bar wrapper
-│   │   └── RequireAuth.tsx   # redirect to /login if not authed
+│   │   ├── RequireAuth.tsx   # redirect to /login if not authed
+│   │   ├── RequireAdmin.tsx  # redirect if not admin
+│   │   └── nav.ts            # NAV_ITEMS array + toPath()
 │   └── ui/
-│       ├── Button.tsx
-│       ├── Input.tsx
-│       ├── Card.tsx
+│       ├── Avatar.tsx
 │       ├── Badge.tsx
-│       └── Table.tsx
+│       ├── Button.tsx
+│       ├── Card.tsx
+│       ├── Input.tsx
+│       ├── Modal.tsx
+│       ├── Page.tsx          # Page + PageHeader wrappers
+│       ├── States.tsx        # Loading, ErrorState, EmptyState
+│       ├── Table.tsx
+│       └── Tabs.tsx
 ├── pages/
 │   ├── Login.tsx
 │   ├── Ranking.tsx
@@ -155,15 +163,16 @@ src/
 │   ├── MemberDetail.tsx
 │   ├── MbtiList.tsx
 │   ├── Profile.tsx
-│   ├── Meetings.tsx
+│   ├── Meetings.tsx          # calendar view + day slide panel
 │   ├── MeetingDetail.tsx
 │   └── admin/
 │       ├── AdminDashboard.tsx
 │       ├── WelcomeMsg.tsx
 │       ├── Commands.tsx
-│       └── Settlements.tsx
+│       ├── Settlements.tsx
+│       └── Titles.tsx        # title CRUD (admin only)
 └── router/
-    └── index.tsx         # all routes defined here
+    └── index.tsx
 ```
 
 ---
@@ -171,66 +180,58 @@ src/
 ## TypeScript Types (`src/types/index.ts`)
 
 ```ts
-export interface LogEntry {
-  date: string        // ISO string, KST
-  name: string
-}
-
-export interface LogExit {
-  date: string
-  name: string
-  cause: '나가기' | '강퇴'
-  kicked_by: string | null
-}
-
-export interface LogChangeName {
-  date: string
-  old_name: string
-  new_name: string
-}
-
-export interface UserLogs {
-  entry: LogEntry[]
-  exit: LogExit[]
-  change_name: LogChangeName[]
-}
+export interface LogEntry { date: string; name: string }
+export interface LogExit { date: string; name: string; cause: '나가기' | '강퇴'; kicked_by: string | null }
+export interface LogChangeName { date: string; old_name: string; new_name: string }
+export interface UserLogs { entry: LogEntry[]; exit: LogExit[]; change_name: LogChangeName[] }
 
 export interface User {
   id: string
-  name: string
+  name: string              // handle (login ID, no @)
+  kakao_name: string        // display name from KakaoTalk
   code: string
   logged_in: string[]
   logged_in_agent: string[]
-  birthday: string          // format: "YYMMDD", e.g. "041006"
+  birthday: string          // "YYMMDD"
   chat_count: number
   logs: UserLogs
-  permission: number[]      // permission IDs; admin if includes 0 (define constant)
-  titles: string[]          // all nicknames
-  title: string             // current active nickname
+  permission: number[]      // PERM_OWNER=1, PERM_ADMIN=2
+  titles: string[]          // title names assigned to user
+  title: string             // currently active title
+  mbti: string | null
+  profile_image: string | null
+  exp: number
+  level: number
+  attend_at: string | null
+  point: number
   created_at: string
   updated_at: string
+}
+
+export interface TitleItem {
+  id: string
+  name: string
+  created_at: string
 }
 
 export interface Meeting {
   id: string
   name: string
-  date: string              // ISO date
+  date: string              // ISO date "YYYY-MM-DD"
   description: string | null
   created_by: string        // user id
+  settled: boolean
   created_at: string
 }
 
-export interface MeetingMember {
-  meeting_id: string
-  user_id: string
-}
+export interface MeetingMember { meeting_id: string; user_id: string }
 
 export interface MeetingItem {
   id: string
   meeting_id: string
   label: string
   amount: number
-  payer_id: string | null   // null = split equally among all members
+  payer_id: string | null
 }
 
 export interface Command {
@@ -241,26 +242,31 @@ export interface Command {
 }
 
 export interface WelcomeMessage {
-  id: string
+  id: number
   text: string | null
   image_url: string | null
 }
 
-// Permission constants
-export const PERM_ADMIN = 0
+export const PERM_OWNER = 1
+export const PERM_ADMIN = 2
+
+export const MBTI_TYPES = [
+  'INTJ','INTP','ENTJ','ENTP',
+  'INFJ','INFP','ENFJ','ENFP',
+  'ISTJ','ISFJ','ESTJ','ESFJ',
+  'ISTP','ISFP','ESTP','ESFP',
+] as const
 ```
 
 ---
 
 ## Supabase Schema
 
-Tables to create in Supabase dashboard:
-
 ```sql
--- users table mirrors the KakaoTalk bot's schema exactly
 create table users (
   id text primary key,
-  name text not null,
+  name text not null,           -- handle
+  kakao_name text default '',   -- display name
   code text not null,
   logged_in text[] default '{}',
   logged_in_agent text[] default '{}',
@@ -270,8 +276,20 @@ create table users (
   permission integer[] default '{}',
   titles text[] default '{}',
   title text default '',
+  mbti text,
+  profile_image text,
+  exp integer default 0,
+  level integer default 1,
+  attend_at timestamptz,
+  point integer default 0,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
+);
+
+create table titles (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  created_at timestamptz default now()
 );
 
 create table meetings (
@@ -280,6 +298,7 @@ create table meetings (
   date date not null,
   description text,
   created_by text references users(id),
+  settled boolean default false,
   created_at timestamptz default now()
 );
 
@@ -311,174 +330,104 @@ create table welcome_message (
 );
 ```
 
-**Supabase client (`src/lib/supabase.ts`):**
-```ts
-import { createClient } from '@supabase/supabase-js'
-
-const url = import.meta.env.VITE_SUPABASE_URL as string
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string
-
-export const supabase = createClient(url, key)
-```
-
-Env vars go in `.env.local`:
-```
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_ANON_KEY=...
-```
-
 ---
 
 ## Auth Flow
 
-**Login logic (`src/lib/auth.ts`):**
-
 ```
 login(name: string, code?: string) → User | AuthError
 
-1. Query users table WHERE name = $name (exact match)
-2. If no user found → throw "유저를 찾을 수 없습니다"
-3. Get current navigator.userAgent
-4. If user.logged_in_agent includes current UA → login success (no code needed)
-5. Else if code is not provided → throw { needCode: true }
-6. Else if code !== user.code → throw "코드가 올바르지 않습니다"
-7. Else → append UA to logged_in_agent via supabase UPDATE → login success
+1. Query users WHERE name = $name
+2. No user → throw "유저를 찾을 수 없습니다"
+3. Check navigator.userAgent against user.logged_in_agent
+4. UA match → login success (no code needed)
+5. No code provided → throw NeedCodeError
+6. code !== user.code → throw "코드가 올바르지 않습니다"
+7. Else → append UA to logged_in_agent (UPDATE) → login success
 8. On success: save user to zustand authStore, save user.id to sessionStorage
 ```
 
-**Session persistence:** On app load, read `sessionStorage.getItem('uid')`, re-fetch user from Supabase, restore authStore. If fetch fails, clear and redirect to login.
+**Session persistence:** On app load, read `sessionStorage.getItem('uid')`, re-fetch user, restore authStore. Failure → redirect to login.
 
-**Admin check:** `user.permission.includes(PERM_ADMIN)` (PERM_ADMIN = 0)
+**Permission checks:**
+- `isOwner`: `user.permission.includes(PERM_OWNER)` (1)
+- `isAdmin`: `user.permission.includes(PERM_ADMIN)` (2) — owners are NOT automatically admins unless they also have permission 2
+- `useAuth()` hook exposes both flags
 
-**RequireAuth component:** wraps protected routes. If `!authStore.user`, redirect to the appropriate login path (`/login` or `/m/login` based on current path prefix).
+**Login input:** The name field shows `@` prefix visually (positioned absolutely) but passes the value without `@` to `login()`. Only Korean, English, digits, `_`, `.` are allowed.
 
 ---
 
 ## Routing (`src/router/index.tsx`)
 
-Use `createBrowserRouter`. Structure:
-
 ```
-/ → redirect to /ranking (or /m/ranking if on mobile)
-/login → Login (no layout)
-/m/login → Login (no layout, mobile flag)
+/ → redirect to /ranking or /m/ranking (auto-detect mobile)
+/login, /m/login → Login (no layout)
 
-PC routes (wrapped in PCLayout > RequireAuth):
-  /ranking
-  /members
-  /members/:id
-  /mbti
-  /profile
-  /meetings
-  /meetings/:id
-  /admin              (RequireAdmin guard)
-  /admin/welcome      (RequireAdmin)
-  /admin/commands     (RequireAdmin)
-  /admin/settlements  (RequireAdmin)
+PC routes (PCLayout > RequireAuth):
+  /ranking, /members, /members/:id, /profile
+  /meetings, /meetings/:id
+  /admin, /admin/welcome, /admin/commands, /admin/settlements, /admin/titles (RequireAdmin)
 
-Mobile routes (wrapped in MobileLayout > RequireAuth):
-  /m/ranking
-  /m/members
-  /m/members/:id
-  /m/mbti
-  /m/profile
-  /m/meetings
-  /m/meetings/:id
-  /m/admin            (RequireAdmin)
-  /m/admin/welcome    (RequireAdmin)
-  /m/admin/commands   (RequireAdmin)
-  /m/admin/settlements (RequireAdmin)
+Mobile routes (/m prefix, MobileLayout > RequireAuth):
+  same paths prefixed with /m/
 ```
-
-PC and mobile pages share the same page component — the layout differs, not the content.
-
-**Auto-detect mobile:** On the root `/` redirect, check `window.innerWidth < 768` or `navigator.userAgent` to redirect to `/m/ranking` vs `/ranking`.
 
 ---
 
 ## Layout Components
 
-Both layouts wrap their `<Outlet />` in a `LayoutContext.Provider` that exposes `{ isMobile }` — `PCLayout` provides `false`, `MobileLayout` provides `true`. Pages read it via `useIsMobile()`. This is how a shared page renders a table on PC and a card list on mobile without re-detecting width.
+Both layouts provide `LayoutContext.Provider` with `{ isMobile }`. Pages read it via `useIsMobile()`.
 
-### PCLayout (`src/components/layout/PCLayout.tsx`)
+### PCLayout — sidebar + main
 
 ```
-┌────────────────────────────────────────────┐
-│ Sidebar (w-56) │ Topbar (h-14)             │
-│  Logo (#00FFBF)│ Page title   | User badge │
-│  ─────────────│───────────────────────────│
-│  Nav items     │                           │
-│  (icon + text) │   <Outlet />              │
-│  ─────────────│                           │
-│  [Admin menu]  │                           │
-│  (if isAdmin)  │                           │
-└────────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│ Sidebar (w-56)  │  <main> (flex-1)           │
+│  Logo           │                            │
+│  Nav items      │   <Outlet />               │
+│  ─ (admin only) │                            │
+│  Admin items    │                            │
+│  ─────────────  │                            │
+│  User card      │                            │
+└──────────────────────────────────────────────┘
 ```
 
-- Sidebar background: `bg-[--color-surface]`, right border: `border-r border-[--color-border]`
-- Active nav item: left accent bar `border-l-2 border-[--color-accent]` + `text-[--color-accent]`
-- Topbar: `bg-[--color-bg] border-b border-[--color-border]`
+Nav items:
+- 랭킹 (`Trophy`) → `/ranking`
+- 멤버 (`Users`) → `/members`
+- 일정 (`CalendarDays`) → `/meetings`
+- 내 프로필 (`User`) → `/profile`
+- ─── admin divider ───
+- 관리 (`ShieldCheck`) → `/admin`
 
-Nav items (PC):
-- 랭킹 (`Trophy` icon) → `/ranking`
-- 멤버 (`Users` icon) → `/members`
-- MBTI (`LayoutGrid` icon) → `/mbti`
-- 모임 (`CalendarDays` icon) → `/meetings`
-- 내 프로필 (`User` icon) → `/profile`
-- ─── (divider, admin only below) ───
-- 관리 (`ShieldCheck` icon) → `/admin`
+Active nav: `bg-[--color-surface-2] text-[--color-text] font-medium`
 
-### MobileLayout (`src/components/layout/MobileLayout.tsx`)
+Sidebar user card (bottom): profile image + level + handle + logout button. Owner badge = red crown, Admin badge = blue crown.
+
+### MobileLayout — bottom tab bar
 
 ```
 ┌─────────────────────────────┐
-│     <Outlet />              │  (scrollable content area)
+│     <Outlet />              │
 ├─────────────────────────────┤
-│ 랭킹 │ 멤버 │ MBTI │ 모임 │ 나  │  bottom tab bar (h-16)
+│ 랭킹 │ 멤버 │ 일정 │ 나  │ (관리) │
 └─────────────────────────────┘
 ```
 
-- Tab bar: `bg-[--color-surface] border-t border-[--color-border]`
-- Active tab: icon + label in `text-[--color-accent]`, inactive: `text-[--color-text-muted]`
-- If isAdmin: add `ShieldCheck` tab that goes to `/m/admin`
+Tab bar: `fixed bottom-0 z-40 bg-[--color-surface]/95 backdrop-blur-md border-t border-[--color-border]`
+Active tab: `text-[--color-accent]` with pill background. Inactive: `text-[--color-text-muted]`.
+`내 프로필` label is shortened to `나` in tab bar.
 
 ---
 
 ## Responsive Layout
 
-PC and mobile are split by route (`/m/*`) and wrapped in different layouts, but the **page components are shared**. A shared page adapts in two ways:
+Split by route (`/m/*`), not by screen width. Pages read `useIsMobile()` for structural markup differences (table vs. card list).
 
-1. **Tailwind responsive utilities** for spacing/columns (the default).
-2. **An `isMobile` flag** for cases where the markup must differ structurally (table vs. card list). Expose it via a tiny `useIsMobile()` hook that reads the route prefix (`/m/`) — do not re-detect by width inside pages. The layout already knows which it is; pass it down through a `LayoutContext` and read it with `useIsMobile()`.
+**PC:** Fill the full width. No `max-w-*` cap on list/table/dashboard pages. Multi-column grids scale with screen width.
 
-### PC — use the full width
-
-The screen is wide; do not waste it with a narrow centered column.
-
-- Content area fills the space next to the sidebar — **no fixed `max-w-*` cap** on list/table/dashboard pages. Use `w-full` with comfortable page padding (`px-8 py-6`).
-- Prefer multi-column grids that scale with width:
-  - Card lists (Members, Meetings): `grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`
-  - Dashboard stat cards: `grid grid-cols-2 xl:grid-cols-4 gap-4`
-  - MBTI buckets: `grid grid-cols-2 lg:grid-cols-4 gap-4`
-- Tables span the full width (`w-full`); let flexible columns (name, title) take remaining space, keep numeric columns (chat count) narrow and right-aligned.
-- The **only** place a narrow column is correct is a focused form (Login, the Profile edit form) — cap those at `max-w-md` / `max-w-lg` and center them. Everything else goes wide.
-
-### Mobile — nothing breaks, nothing overflows
-
-- **Never horizontal-scroll the page.** The body is single-column. Replace wide tables with a card/list per row (use `isMobile`); the Ranking and Members tables become stacked cards on mobile.
-- Page padding `px-4`; cards go full width (`w-full`), stacked vertically (`flex flex-col gap-3`).
-- **Text never breaks the layout:** long names/nicknames use `truncate` (single line) or `break-words` (wrapping blocks). Any flex row holding text needs `min-w-0` on the text child so `truncate` actually works.
-- **Buttons:** primary actions are full-width (`w-full`) on mobile; never let a button label wrap to two lines — keep labels short. Icon-only buttons keep a min touch target of 44×44px (`min-h-11 min-w-11`).
-- Filter/chip rows (MBTI filter, tabs) that can exceed the width scroll **horizontally inside their own container** (`flex overflow-x-auto`), not the page. Add `shrink-0` to each chip.
-- Bottom tab bar is `fixed bottom-0`; give the scrollable content `pb-20` so the last item isn't hidden behind it. Respect the safe area: `pb-[env(safe-area-inset-bottom)]` on the tab bar.
-- Modals on mobile: full-width with side margin (`mx-4`), `max-h-[85vh] overflow-y-auto` so long forms scroll inside the modal.
-- Tap targets (nav items, list rows, chips) are at least 44px tall.
-
-### Shared rules
-
-- Use `min-w-0` liberally on flex children that contain text — this is the #1 cause of overflow.
-- Images are always `max-w-full h-auto` (welcome-message preview, command images).
-- Test every page at 360px (mobile) and 1440px (PC) widths before considering it done.
+**Mobile:** Single-column. Replace tables with card lists. `pb-20` on content to clear the fixed tab bar. Long text uses `truncate` with `min-w-0` on flex children. Horizontal-scrollable chip rows use `flex overflow-x-auto shrink-0`.
 
 ---
 
@@ -486,258 +435,73 @@ The screen is wide; do not waste it with a narrow centered column.
 
 ### Login (`/login`, `/m/login`)
 
-State machine:
-- `step: 'name' | 'code'`
-- Initially show name input + submit button
-- On submit: call `login(name)` → if `needCode` error, transition to `step: 'code'`
-- In code step: show name (readonly, smaller) + code input
-- On code submit: call `login(name, code)`
-- Loading state: disable inputs, show spinner inside button
-- Error: red text below the relevant input
+- Name input with `@` prefix (visual only — value stored/sent without `@`)
+- Input validation: Korean, English, digits, `_`, `.` only
+- Step 1: name → Step 2: code (if UA not recognized)
+- Full-page centered card, no layout wrapper
 
-UI: centered card on full-page dark background. Logo/title at top. No sidebar.
+### 일정 (`/meetings`, `/m/meetings`)
 
----
+**Calendar view** (not a card list):
+- Monthly grid, 6×7, Sunday-first
+- Month navigator: `< 2025년 6월 >`
+- Each date is a standalone button (no grid borders)
+- Today: accent-colored filled circle; use `style={{ backgroundColor: 'var(--color-accent)' }}` for the fill (not `bg-[--color-accent]` Tailwind class, which can be unreliable) + `text-white`
+- Selected date: `border-2 border-[--color-accent] text-[--color-accent]` circle
+- Other-month dates: `opacity-20` on the whole cell
+- Meeting indicators: small accent dots below the number
 
-### Ranking (`/ranking`, `/m/ranking`)
+**Day slide panel** (opens on date click):
+- PC: `fixed right-0 top-0 h-full w-88` sliding in from right (`translate-x-full → translate-x-0`)
+- Mobile: `fixed bottom-0 inset-x-0 max-h-82vh` sliding up from bottom
+- Shows meetings for that date + "이 날 일정 추가" button
+- Toggle: clicking the same date closes the panel
 
-Data: `SELECT id, name, title, chat_count FROM users ORDER BY chat_count DESC`
-
-Display (no emoji — use a `RankBadge` component):
-- Rank 1–3: lucide `Medal` icon inside a circular badge, colored by rank — gold `#FFD700`, silver `#C0C0C0`, bronze `#CD7F32`. Rank 1 row gets a faint accent background (`bg-[--color-accent]/5`).
-- Rank 4+: the plain rank number in `text-[--color-text-muted]`, centered in the same badge footprint so columns stay aligned.
-- Columns: 순위 | 이름 | 별명 | 채팅 수
-- Clicking a row navigates to `/members/:id`
-
-Mobile: card list instead of table (each card shows the same `RankBadge` + name + count). See Responsive Layout for the table→card rule.
-
----
-
-### Members (`/members`, `/m/members`)
-
-Data: `SELECT id, name, title, titles, birthday FROM users ORDER BY name`
-
-UI:
-- Search input at top (filter by name or any value in `titles`)
-- MBTI filter chips row: `ALL` + 16 MBTI types. Clicking filters the list client-side.
-  - Active chip: accent background
-  - MBTI stored in `titles` array? **No** — MBTI is NOT currently in the schema. This needs clarification.
-  
-> **NOTE:** The `User` schema does not have an `mbti` field. MBTI must be added to Supabase `users` table as `mbti text` column. Add it to the TypeScript type as `mbti: string | null`.
-
-- Card per user: name (bold), title (muted), MBTI badge, birthday (formatted: `YYMMDD` → `MM/DD`)
-- Clicking card → `/members/:id`
-
----
+**Create modal** (opens from header button or panel button):
+- Accent gradient strip at top
+- Fields: 일정 이름 (required), 날짜 (pre-filled from selected date), 설명 (optional)
 
 ### MemberDetail (`/members/:id`, `/m/members/:id`)
 
-Data: full `users` row by id
-
-Layout:
-```
-┌──────────────────────────────────┐
-│  [Avatar: initials circle]       │
-│  Name (large)  Title badge       │
-│  MBTI badge   Birthday   채팅수   │
-└──────────────────────────────────┘
-┌──[ 입장/퇴장 | 닉변 이력 | 통계 ]──┐
-│  Tab content                     │
-└──────────────────────────────────┘
-```
-
-Tab 1 — 입장/퇴장:
-- Merged and sorted by date (newest first)
-- Entry rows: green left border, `user.logs.entry`
-- Exit rows: red left border, `user.logs.exit`
-  - If `cause === '강퇴'`: show `kicked_by` user name (fetch separately)
-
-Tab 2 — 닉변 이력:
-- `user.logs.change_name` sorted newest first
-- `old_name → new_name` with date
-
-Tab 3 — 통계:
-- 총 채팅 수, 입장 횟수, 퇴장 횟수, 강퇴 횟수
-- Simple stat cards grid
-
-Avatar: circle with first character of name, `bg-[--color-accent]/20 text-[--color-accent]`
-
----
-
-### MbtiList (`/mbti`, `/m/mbti`)
-
-Data: all users with `mbti` field
-
-Group users into 16 MBTI buckets. For each bucket:
-```
-┌─ INFJ (3) ──────────────────┐
-│  [김철수] [이영희] [박민준]  │
-└──────────────────────────────┘
-```
-
-- Bucket header: MBTI type in accent color + count badge
-- User avatars: small circles (32px) with initials, clicking navigates to `/members/:id`
-- Users with `mbti = null` go into a `미설정` bucket at the bottom
-
-MBTI type ordering: INTJ, INTP, ENTJ, ENTP, INFJ, INFP, ENFJ, ENFP, ISTJ, ISFJ, ESTJ, ESFJ, ISTP, ISFP, ESTP, ESFP
-
----
-
-### Profile (`/profile`, `/m/profile`)
-
-Data: current user from authStore (re-fetch on mount to get fresh data)
-
-Editable fields:
-- **MBTI**: dropdown of 16 types + `없음`
-- **Birthday**: text input, placeholder `YYMMDD` (e.g. `041006`)
-- **별명(titles)**: tag input
-  - Show existing titles as removable chips (×)
-  - Text input with Enter/comma to add new title
-  - Cannot remove the currently active `title` unless another is set first
-- **대표 별명(title)**: dropdown of current `titles` array
-
-Save: UPDATE users SET mbti=..., birthday=..., titles=..., title=... WHERE id=...
-
-Non-editable display: name, 채팅 수, 가입일(created_at)
-
----
-
-### Meetings (`/meetings`, `/m/meetings`)
-
-Data: `SELECT * FROM meetings ORDER BY date DESC` + member count per meeting
-
-- Card list: meeting name, date, `N명 참여`, description excerpt
-- Clicking card → `/meetings/:id`
-- `+ 모임 만들기` button → opens modal
-  - Modal fields: 이름 (required), 날짜 (date picker, required), 설명 (textarea, optional)
-  - On submit: INSERT into meetings, INSERT current user into meeting_members
-
----
-
-### MeetingDetail (`/meetings/:id`, `/m/meetings/:id`)
-
-Data: meeting row + meeting_members (with user names) + meeting_items
-
-Layout:
-```
-Meeting title / date / description
-
-Members section:
-  [Avatar] 김철수  [Avatar] 이영희  ...
-  [+ 멤버 추가] button → user search modal
-
-Settlement section:
-  Items list: label | amount | payer
-  [+ 항목 추가] button → inline form row
-  
-  Settlement summary:
-    1인당 N원 (if equal split)
-    Breakdown: 누가 누구에게 얼마
-```
-
-Settlement calculation:
-- Items with `payer_id = null`: cost split equally among all members
-- Items with `payer_id`: that person pays, others owe their share
-- Final summary: for each member, compute net balance → simplify to minimum transactions
-
-Display results as: `[이름] → [이름]: [금액]원`
-
----
+Admin section — **칭호 관리** card:
+- **보유 칭호**: each title chip shows a `Crown` icon (accent if active, dimmed if not). Clicking name/icon sets as active title. `×` button removes.
+- **추가 가능한 칭호**: dashed-border chips loaded from `titles` table. Click to add instantly (no dropdown).
 
 ### AdminDashboard (`/admin`, `/m/admin`)
 
-Stat cards (2×2 grid):
-- 총 유저 수: `SELECT count(*) FROM users`
-- 오늘 입장: count entries in `logs->entry` where date is today (KST)
-- 총 채팅 수: `SELECT sum(chat_count) FROM users`
-- 전체 모임 수: `SELECT count(*) FROM meetings`
+Stat cards: 총 유저 수, 오늘 입장, 총 채팅 수, 전체 일정 수
 
-Quick nav cards:
-- 입장 메시지 설정 → `/admin/welcome`
-- 명령어 관리 → `/admin/commands`
-- 모임 정산 → `/admin/settlements`
+Quick nav: 입장 메시지 설정, 명령어 관리, 모임 정산, **칭호 관리** → `/admin/titles`
 
----
+### Settlements (`/admin/settlements`)
 
-### WelcomeMsg (`/admin/welcome`, `/m/admin/welcome`)
-
-Data: `SELECT * FROM welcome_message WHERE id = 1`
-
-Form:
-- Textarea for `text`
-- Image upload button → upload to Supabase Storage bucket `welcome-images` → save public URL to `image_url`
-- Image preview below upload
-- `저장` button → UPSERT welcome_message
-
----
-
-### Commands (`/admin/commands`, `/m/admin/commands`)
-
-Data: `SELECT * FROM commands ORDER BY trigger`
-
-Table: 트리거 | 응답 텍스트 | 이미지 | 액션(수정/삭제)
-
-- `+ 명령어 추가` button → opens modal
-  - Fields: trigger (required), response_text (textarea), image upload
-- Edit: same modal pre-filled
-- Delete: confirm dialog before DELETE
-
----
-
-### Settlements (`/admin/settlements`, `/m/admin/settlements`)
-
-Data: all meetings with their items and member count
-
-Table: 모임 이름 | 날짜 | 인원 | 총액 | 상태
-
-- Status column: `미정산` (orange badge) vs `정산완료` (green badge)
-- Meetings table needs a `settled boolean default false` column
-- Toggle settled: UPDATE meetings SET settled = true/false
-- Clicking row → `/meetings/:id`
-
-> Add `settled boolean default false` to meetings table.
+Column: 일정 이름 | 날짜 | 인원 | 총액 | 상태 (미정산/정산완료 toggle)
 
 ---
 
 ## Coding Conventions
 
-- All components are function components with TypeScript, no class components
-- No `any` types. Use proper interfaces.
-- Data fetching: inline `useEffect` + `useState` per page (no SWR/React Query — keep it simple)
-- Loading state: show skeleton or spinner; never render stale empty content
-- Error state: show error message in red, retry button if appropriate
-- Dates stored as ISO strings. Display in KST. Use `new Date(str).toLocaleDateString('ko-KR')` for display.
-- Birthday format `YYMMDD` stays as string in DB; display as `MM월 DD일`
-- All Korean text for UI labels (buttons, headers, placeholders) — this is a Korean-user product
-- No comments in code unless the logic is genuinely non-obvious
-- No barrel `index.ts` re-exports — import directly from the file
-- Page components are thin: just layout + data fetching. Extract non-trivial logic to hooks or lib functions.
-
----
-
-## File Naming
-
-| Thing | Convention |
-|---|---|
-| React components | PascalCase.tsx |
-| Hooks | camelCase.ts starting with `use` |
-| Lib/util | camelCase.ts |
-| Store | camelCase with `Store` suffix |
-| Types | index.ts (all in one file) |
+- Function components + TypeScript only. No `any`.
+- Data fetching: `useEffect` + `useState` per page. No SWR/React Query.
+- Loading → spinner/skeleton. Error → red message + retry if helpful.
+- Dates: ISO strings in DB, `toLocaleDateString('ko-KR')` for display.
+- Birthday `YYMMDD` string → display as `MM월 DD일`.
+- Korean UI text throughout.
+- No code comments unless logic is genuinely non-obvious.
+- No barrel `index.ts` re-exports.
+- Page components are thin: layout + data fetch only.
+- Use `sessionStorage` for auth (not `localStorage`).
 
 ---
 
 ## What NOT to do
 
-- Do not use `App.css` or the default Vite boilerplate styles — replace them
-- Do not use Supabase Auth — auth is custom (name + code + User-Agent)
-- Do not add React Query, SWR, Axios — plain fetch via supabase-js is enough
+- Do not use Supabase Auth — custom auth (name + code + User-Agent)
+- Do not add React Query, SWR, or Axios
 - Do not add animation libraries — Tailwind transitions only
-- Do not create a separate mobile component for each page — reuse the same page component in both layouts
-- Do not use `localStorage` for auth session — use `sessionStorage` (session-scoped login)
 - Do not add a light/dark theme toggle — dark only
-- Do not use emoji in UI chrome — use `lucide-react` icons (emoji only allowed inside user-authored DB content)
-- Do not cap list/table/dashboard pages with a narrow `max-w-*` on PC — fill the width; narrow columns are only for focused forms
-- Do not let the page scroll horizontally on mobile — convert wide tables to stacked cards via `useIsMobile()`
-- Do not re-detect mobile by `window.innerWidth` inside pages — read `useIsMobile()` (route-based)
-- Do not write any KakaoTalk bot logic — that's a separate system
+- Do not use emoji in UI chrome
+- Do not cap list/dashboard pages with `max-w-*` on PC
+- Do not re-detect mobile by `window.innerWidth` inside pages — use `useIsMobile()`
+- Do not write KakaoTalk bot logic
+- Do not use `bg-[--color-accent]` for critical backgrounds — use inline `style` with `var(--color-accent)` instead

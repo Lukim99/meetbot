@@ -16,12 +16,18 @@ export function formatDateTime(iso: string): string {
   })
 }
 
-// "041006" -> "10월 06일"
-export function formatBirthday(yymmdd: string): string {
-  if (!yymmdd || yymmdd.length !== 6) return yymmdd || '-'
-  const mm = yymmdd.slice(2, 4)
-  const dd = yymmdd.slice(4, 6)
-  return `${mm}월 ${dd}일`
+// "YYYY.MM.DD" -> "YYYY년 MM월 DD일" (new format)
+// "YYMMDD"    -> "MM월 DD일"        (legacy)
+export function formatBirthday(birthday: string): string {
+  if (!birthday) return '-'
+  if (birthday.length === 10 && birthday[4] === '.' && birthday[7] === '.') {
+    const [yyyy, mm, dd] = birthday.split('.')
+    return `${yyyy}년 ${mm}월 ${dd}일`
+  }
+  if (birthday.length === 6) {
+    return `${birthday.slice(2, 4)}월 ${birthday.slice(4, 6)}일`
+  }
+  return birthday || '-'
 }
 
 export function formatWon(amount: number): string {

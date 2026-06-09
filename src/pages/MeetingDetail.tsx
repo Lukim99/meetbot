@@ -1,26 +1,55 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Plus, Trash2, UserPlus } from 'lucide-react'
+import { ArrowLeft, Clock, Edit2, Plus, Trash2, Users } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useIsMobile } from '../hooks/useIsMobile'
+import { useAuth } from '../hooks/useAuth'
 import type { Meeting, MeetingItem, User } from '../types'
 import { Page } from '../components/ui/Page'
 import { Card } from '../components/ui/Card'
 import { Avatar } from '../components/ui/Avatar'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
-import { Modal } from '../components/ui/Modal'
 import { Badge } from '../components/ui/Badge'
 import { Loading, ErrorState } from '../components/ui/States'
+import { MeetingFormModal, type MeetingFormData } from '../components/MeetingFormModal'
 import { formatDate, formatWon } from '../lib/format'
 import { computeSettlement } from '../lib/settlement'
+import { cn } from '../lib/cn'
 
 type Member = Pick<User, 'id' | 'name'>
+
+function toISO(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function applyDeadline(startISO: string, offset: string): string | null {
+  const ms: Record<string, number> = {
+    '30m': 30 * 60000, '1h': 3600000, '3h': 10800000, '12h': 43200000, '1d': 86400000,
+  }
+  const delta = ms[offset]
+  return delta ? new Date(new Date(startISO).getTime() - delta).toISOString() : null
+}
+
+function formatTimeRange(m: Meeting): string {
+  if (!m.start_time) return formatDate(m.date)
+  const start = new Date(m.start_time)
+  const startTime = start.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+  if (!m.end_time) return `${formatDate(m.date)} ${startTime}`
+  const end = new Date(m.end_time)
+  const endTime = end.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+  if (toISO(start) === toISO(end)) return `${formatDate(m.date)} ${startTime} ~ ${endTime}`
+  return (
+    `${start.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })} ${startTime}` +
+    ` ~ ${end.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })} ${endTime}`
+  )
+}
 
 export default function MeetingDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const isMobile = useIsMobile()
+  const { user, isAdmin } = useAuth()
 
   const [meeting, setMeeting] = useState<Meeting | null>(null)
   const [members, setMembers] = useState<Member[]>([])
@@ -28,10 +57,12 @@ export default function MeetingDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const [addOpen, setAddOpen] = useState(false)
   const [label, setLabel] = useState('')
   const [amount, setAmount] = useState('')
   const [payer, setPayer] = useState('')
+
+  const [editOpen, setEditOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const load = useCallback(async () => {
     if (!id) return
@@ -48,9 +79,7 @@ export default function MeetingDetail() {
     setLoading(false)
   }, [id])
 
-  useEffect(() => {
-    load()
-  }, [load])
+  useEffect(() => { load() }, [load])
 
   const nameOf = useCallback(
     (uid: string | null) => (uid ? members.find((m) => m.id === uid)?.name ?? uid : '공동'),
@@ -62,21 +91,83 @@ export default function MeetingDetail() {
     [members, items],
   )
 
+  if (loading) return <Page><Loading /></Page>
+  if (error) return <Page><ErrorState message={error} /></Page>
+  if (!meeting) return <Page><ErrorState message="일정을 찾을 수 없습니다" /></Page>
+
+  const now = new Date()
+  const isJoined = user ? members.some((m) => m.id === user.id) : false
+  const isHost = !!(user && meeting.host_id && user.id === meeting.host_id)
+  const canEdit = isHost || isAdmin
+  const isPastDeadline = !!meeting.deadline && new Date(meeting.deadline) < now
+  const isFull = meeting.max_members != null && members.length >= meeting.max_members
+
+  const joinMeeting = async () => {
+    if (!user) return
+    const { error: err } = await supabase
+      .from('meeting_members')
+      .insert({ meeting_id: meeting.id, user_id: user.id })
+    if (!err) {
+      if (!meeting.host_id) {
+        await supabase.from('meetings').update({ host_id: user.id }).eq('id', meeting.id)
+      }
+      load()
+    }
+  }
+
+  const leaveMeeting = async () => {
+    if (!user) return
+    await supabase
+      .from('meeting_members')
+      .delete()
+      .eq('meeting_id', meeting.id)
+      .eq('user_id', user.id)
+    load()
+  }
+
+  const deleteMeeting = async () => {
+    if (!confirm('일정을 삭제할까요?')) return
+    await supabase.from('meetings').delete().eq('id', meeting.id)
+    navigate(isMobile ? '/m/meetings' : '/meetings')
+  }
+
+  const handleEdit = async (data: MeetingFormData) => {
+    if (!data.name.trim() || !data.startDate) return
+    setSaving(true)
+    const startISO = new Date(`${data.startDate}T${data.startTime || '00:00'}:00`).toISOString()
+    const endISO =
+      data.hasEnd && data.endDate
+        ? new Date(`${data.endDate}T${data.endTime || '00:00'}:00`).toISOString()
+        : null
+    const deadline = data.deadlineOffset !== '' ? applyDeadline(startISO, data.deadlineOffset) : null
+    await supabase
+      .from('meetings')
+      .update({
+        name: data.name.trim(),
+        date: data.startDate,
+        start_time: startISO,
+        end_time: endISO,
+        description: data.desc.trim() || null,
+        min_members: data.minMembers ? parseInt(data.minMembers) : null,
+        max_members: data.maxMembers ? parseInt(data.maxMembers) : null,
+        deadline,
+      })
+      .eq('id', meeting.id)
+    setSaving(false)
+    setEditOpen(false)
+    load()
+  }
+
   const addItem = async () => {
     if (!id || !label.trim() || !amount) return
-    const { error } = await supabase.from('meeting_items').insert({
+    const { error: err } = await supabase.from('meeting_items').insert({
       meeting_id: id,
       label: label.trim(),
       amount: Number(amount),
       payer_id: payer || null,
     })
-    if (error) {
-      setError(error.message)
-      return
-    }
-    setLabel('')
-    setAmount('')
-    setPayer('')
+    if (err) { setError(err.message); return }
+    setLabel(''); setAmount(''); setPayer('')
     load()
   }
 
@@ -85,51 +176,121 @@ export default function MeetingDetail() {
     load()
   }
 
-  if (loading) return <Page><Loading /></Page>
-  if (error) return <Page><ErrorState message={error} /></Page>
-  if (!meeting) return <Page><ErrorState message="모임을 찾을 수 없습니다" /></Page>
-
   return (
     <Page>
       <button
         onClick={() => navigate(isMobile ? '/m/meetings' : '/meetings')}
-        className="mb-4 flex items-center gap-1.5 text-sm text-[--color-text-muted] hover:text-[--color-text] transition-colors"
+        className="mb-4 flex items-center gap-1.5 text-sm text-[--color-text-muted] transition-colors hover:text-[--color-text]"
       >
         <ArrowLeft size={16} />
-        모임 목록
+        일정 목록
       </button>
 
-      <div className="mb-5 flex flex-wrap items-center gap-3">
-        <h1 className="text-xl font-semibold text-[--color-text]">{meeting.name}</h1>
-        {meeting.settled ? <Badge tone="success">정산완료</Badge> : <Badge tone="warning">미정산</Badge>}
+      {/* header */}
+      <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="text-xl font-semibold text-[--color-text]">{meeting.name}</h1>
+          {meeting.settled ? <Badge tone="success">정산완료</Badge> : <Badge tone="warning">미정산</Badge>}
+        </div>
+        {canEdit && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setEditOpen(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-white/[.10] px-3 py-1.5 text-xs text-[--color-text-muted] transition-colors hover:border-[--color-accent]/50 hover:text-[--color-accent]"
+            >
+              <Edit2 size={12} />
+              수정
+            </button>
+            <button
+              onClick={deleteMeeting}
+              className="flex items-center gap-1.5 rounded-lg border border-red-800/40 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500/10"
+            >
+              <Trash2 size={12} />
+              삭제
+            </button>
+          </div>
+        )}
       </div>
-      <p className="mb-1 text-sm text-[--color-text-muted]">{formatDate(meeting.date)}</p>
-      {meeting.description && (
-        <p className="mb-5 text-sm text-[--color-text]">{meeting.description}</p>
+
+      {/* meta info */}
+      <div className="mb-1 flex items-center gap-1.5 text-sm text-[--color-text-muted]">
+        <Clock size={13} />
+        {formatTimeRange(meeting)}
+      </div>
+
+      {(meeting.min_members || meeting.max_members) && (
+        <div className="mb-1 flex items-center gap-1.5 text-sm text-[--color-text-muted]">
+          <Users size={13} />
+          {[
+            meeting.min_members ? `최소 ${meeting.min_members}명` : '',
+            meeting.max_members ? `최대 ${meeting.max_members}명` : '',
+          ]
+            .filter(Boolean)
+            .join(' / ')}
+        </div>
       )}
 
+      {meeting.deadline && (
+        <p className={cn('mb-1 text-sm', isPastDeadline ? 'text-red-400' : 'text-[--color-text-muted]')}>
+          참가 마감{isPastDeadline ? ' (마감됨)' : ''}: {' '}
+          {new Date(meeting.deadline).toLocaleDateString('ko-KR', {
+            month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
+          })}
+        </p>
+      )}
+
+      {meeting.description && (
+        <p className="mt-1 mb-4 text-sm text-[--color-text]">{meeting.description}</p>
+      )}
+
+      {/* join / leave */}
+      <div className="mb-5 mt-3">
+        {isJoined ? (
+          <button
+            onClick={leaveMeeting}
+            className="rounded-lg border border-white/[.10] px-4 py-2 text-sm text-[--color-text-muted] transition-colors hover:border-red-800/60 hover:text-red-400"
+          >
+            참가 취소
+          </button>
+        ) : isPastDeadline || isFull ? (
+          <span className="text-sm text-[--color-text-muted]">
+            {isPastDeadline ? '참가 마감됨' : '인원 마감됨'}
+          </span>
+        ) : (
+          <button
+            onClick={joinMeeting}
+            className="rounded-lg border border-[--color-accent]/50 px-4 py-2 text-sm font-medium text-[--color-accent] transition-colors hover:bg-[--color-accent]/10"
+          >
+            참가하기
+          </button>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        {/* members */}
         <Card>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-medium text-[--color-text]">참여 멤버 ({members.length})</h2>
-            <Button variant="ghost" onClick={() => setAddOpen(true)} className="px-3 py-1.5">
-              <UserPlus size={14} />
-              추가
-            </Button>
-          </div>
+          <h2 className="mb-3 text-base font-medium text-[--color-text]">
+            참여 멤버 ({members.length}{meeting.max_members ? `/${meeting.max_members}` : ''})
+          </h2>
           <div className="flex flex-wrap gap-3">
             {members.map((m) => (
               <div key={m.id} className="flex items-center gap-2">
                 <Avatar name={m.name} size={32} />
-                <span className="text-sm text-[--color-text]">{m.name}</span>
+                <div>
+                  <span className="text-sm text-[--color-text]">{m.name}</span>
+                  {m.id === meeting.host_id && (
+                    <span className="ml-1.5 text-xs text-[--color-accent]">모임장</span>
+                  )}
+                </div>
               </div>
             ))}
             {members.length === 0 && (
-              <p className="text-sm text-[--color-text-muted]">멤버가 없습니다</p>
+              <p className="text-sm text-[--color-text-muted]">아직 참가자가 없습니다</p>
             )}
           </div>
         </Card>
 
+        {/* settlement items */}
         <Card>
           <h2 className="mb-3 text-base font-medium text-[--color-text]">정산 항목</h2>
           <div className="flex flex-col gap-2">
@@ -157,7 +318,7 @@ export default function MeetingDetail() {
             )}
           </div>
 
-          <div className="mt-3 flex flex-col gap-2 border-t border-[--color-border] pt-3 sm:flex-row">
+          <div className="mt-3 flex flex-col gap-2 pt-3 sm:flex-row" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <Input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
@@ -174,13 +335,11 @@ export default function MeetingDetail() {
             <select
               value={payer}
               onChange={(e) => setPayer(e.target.value)}
-              className="rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none sm:w-32"
+              className="rounded-lg border border-white/[.07] bg-[--color-surface-2] px-3 py-2 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none sm:w-32"
             >
               <option value="">공동 (1/N)</option>
               {members.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name}
-                </option>
+                <option key={m.id} value={m.id}>{m.name}</option>
               ))}
             </select>
             <Button onClick={addItem} disabled={!label.trim() || !amount} className="shrink-0">
@@ -190,6 +349,7 @@ export default function MeetingDetail() {
         </Card>
       </div>
 
+      {/* settlement summary */}
       <Card className="mt-5">
         <h2 className="mb-3 text-base font-medium text-[--color-text]">정산 요약</h2>
         <div className="mb-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
@@ -219,79 +379,13 @@ export default function MeetingDetail() {
         )}
       </Card>
 
-      <AddMemberModal
-        open={addOpen}
-        meetingId={id!}
-        existing={members.map((m) => m.id)}
-        onClose={() => setAddOpen(false)}
-        onAdded={() => {
-          setAddOpen(false)
-          load()
-        }}
+      <MeetingFormModal
+        open={editOpen}
+        meeting={meeting}
+        onClose={() => setEditOpen(false)}
+        onSubmit={handleEdit}
+        submitting={saving}
       />
     </Page>
-  )
-}
-
-function AddMemberModal({
-  open,
-  meetingId,
-  existing,
-  onClose,
-  onAdded,
-}: {
-  open: boolean
-  meetingId: string
-  existing: string[]
-  onClose: () => void
-  onAdded: () => void
-}) {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState<Member[]>([])
-
-  useEffect(() => {
-    if (!open) return
-    const q = query.trim()
-    supabase
-      .from('users')
-      .select('id, name')
-      .ilike('name', `%${q}%`)
-      .order('name')
-      .limit(20)
-      .then(({ data }) => setResults((data ?? []) as Member[]))
-  }, [open, query])
-
-  const add = async (uid: string) => {
-    await supabase.from('meeting_members').insert({ meeting_id: meetingId, user_id: uid })
-    onAdded()
-  }
-
-  return (
-    <Modal open={open} title="멤버 추가" onClose={onClose}>
-      <Input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="이름 검색"
-        className="mb-3"
-        autoFocus
-      />
-      <div className="flex max-h-72 flex-col gap-1 overflow-y-auto">
-        {results
-          .filter((r) => !existing.includes(r.id))
-          .map((r) => (
-            <button
-              key={r.id}
-              onClick={() => add(r.id)}
-              className="flex items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors hover:bg-[--color-surface-2]"
-            >
-              <Avatar name={r.name} size={28} />
-              <span className="text-sm text-[--color-text]">{r.name}</span>
-            </button>
-          ))}
-        {results.filter((r) => !existing.includes(r.id)).length === 0 && (
-          <p className="py-4 text-center text-sm text-[--color-text-muted]">결과가 없습니다</p>
-        )}
-      </div>
-    </Modal>
   )
 }

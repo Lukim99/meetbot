@@ -9,7 +9,7 @@ import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 import { Avatar } from '../components/ui/Avatar'
 import { Loading } from '../components/ui/States'
-import { formatDate } from '../lib/format'
+import { formatDate, formatBirthday } from '../lib/format'
 import { cn } from '../lib/cn'
 
 export default function Profile() {
@@ -20,7 +20,9 @@ export default function Profile() {
   const [modalOpen, setModalOpen] = useState(false)
 
   const [mbti, setMbti] = useState('')
-  const [birthday, setBirthday] = useState('')
+  const [bdYear, setBdYear] = useState('')
+  const [bdMonth, setBdMonth] = useState('')
+  const [bdDay, setBdDay] = useState('')
   const [activeTitle, setActiveTitle] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -42,17 +44,35 @@ export default function Profile() {
 
   const openModal = () => {
     setMbti(user.mbti ?? '')
-    setBirthday(user.birthday ?? '')
     setActiveTitle(user.title ?? '')
+    const bd = user.birthday ?? ''
+    if (bd.length === 10 && bd[4] === '.') {
+      const parts = bd.split('.')
+      setBdYear(parts[0])
+      setBdMonth(String(parseInt(parts[1])))
+      setBdDay(String(parseInt(parts[2])))
+    } else if (bd.length === 6) {
+      setBdYear('')
+      setBdMonth(String(parseInt(bd.slice(2, 4))))
+      setBdDay(String(parseInt(bd.slice(4, 6))))
+    } else {
+      setBdYear(''); setBdMonth(''); setBdDay('')
+    }
     setSaved(false)
     setError(null)
     setModalOpen(true)
+  }
+
+  const buildBirthday = () => {
+    if (!bdYear || !bdMonth || !bdDay) return ''
+    return `${bdYear.padStart(4, '0')}.${bdMonth.padStart(2, '0')}.${bdDay.padStart(2, '0')}`
   }
 
   const save = async () => {
     setSaving(true)
     setSaved(false)
     setError(null)
+    const birthday = buildBirthday()
     const { data, error } = await supabase
       .from('users')
       .update({ mbti: mbti || null, birthday, title: activeTitle, updated_at: new Date().toISOString() })
@@ -65,9 +85,7 @@ export default function Profile() {
     setSaved(true)
   }
 
-  const displayBirthday = user.birthday?.length === 6
-    ? `${user.birthday.slice(0, 2)}년 ${user.birthday.slice(2, 4)}월 ${user.birthday.slice(4, 6)}일`
-    : null
+  const displayBirthday = user.birthday ? formatBirthday(user.birthday) : null
 
   return (
     <Page>
@@ -119,7 +137,7 @@ export default function Profile() {
             <InfoRow label="생일" value={displayBirthday ?? '미설정'} />
           </div>
 
-          <div className="border-t border-[--color-border] pt-4 text-xs text-[--color-text-muted]">
+          <div className="pt-4 text-xs text-[--color-text-muted]" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             채팅 {user.chat_count.toLocaleString('ko-KR')} · 가입일 {formatDate(user.created_at)}
           </div>
         </Card>
@@ -135,18 +153,19 @@ export default function Profile() {
             className="w-full max-w-md overflow-hidden rounded-2xl"
             style={{
               background: 'var(--color-surface-2)',
-              boxShadow: '0 32px 64px rgba(0,0,0,0.6), 0 0 0 1px var(--color-border)',
+              boxShadow: '0 32px 64px rgba(0,0,0,0.6)',
+              border: '1px solid rgba(255,255,255,0.08)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* 헤더 */}
-            <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
+            <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               <h2 className="text-sm font-semibold text-[--color-text]">프로필 설정</h2>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
                 aria-label="닫기"
-                className="rounded-md p-1 text-[--color-text-muted] transition-colors hover:bg-[--color-border]/50 hover:text-[--color-text]"
+                className="rounded-md p-1 text-[--color-text-muted] transition-colors hover:bg-white/[.08] hover:text-[--color-text]"
               >
                 <X size={16} />
               </button>
@@ -157,9 +176,9 @@ export default function Profile() {
 
               {/* 칭호 */}
               {user.titles && user.titles.length > 0 && (
-                <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
+                <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                   <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[--color-text-muted]">대표 칭호</div>
-                  <div className="rounded-xl overflow-hidden" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+                  <div className="overflow-hidden rounded-xl" style={{ background: 'var(--color-surface)', border: '1px solid rgba(255,255,255,0.07)' }}>
                     <TitleRow
                       label="없음"
                       selected={activeTitle === ''}
@@ -167,7 +186,7 @@ export default function Profile() {
                       muted
                     />
                     {user.titles.map((t, i) => (
-                      <div key={t} style={i < user.titles.length - 1 ? { borderBottom: '1px solid var(--color-border)' } : undefined}>
+                      <div key={t} style={i < user.titles.length - 1 ? { borderBottom: '1px solid rgba(255,255,255,0.06)' } : undefined}>
                         <TitleRow
                           label={t}
                           selected={t === activeTitle}
@@ -188,7 +207,7 @@ export default function Profile() {
                     className="w-full rounded-lg px-3 py-2 text-sm text-[--color-text] focus:outline-none"
                     style={{
                       background: 'var(--color-surface)',
-                      border: '1px solid var(--color-border)',
+                      border: '1px solid rgba(255,255,255,0.07)',
                     }}
                   >
                     <option value="">없음</option>
@@ -198,13 +217,30 @@ export default function Profile() {
                   </select>
                 </ModalField>
 
-                <ModalField label="생일 (YYMMDD)">
-                  <Input
-                    value={birthday}
-                    onChange={(e) => setBirthday(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    placeholder="041006"
-                    inputMode="numeric"
-                  />
+                <ModalField label="생일">
+                  <div className="flex gap-2">
+                    <Input
+                      value={bdYear}
+                      onChange={(e) => setBdYear(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      placeholder="연도"
+                      inputMode="numeric"
+                      className="flex-[5]"
+                    />
+                    <Input
+                      value={bdMonth}
+                      onChange={(e) => setBdMonth(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                      placeholder="월"
+                      inputMode="numeric"
+                      className="flex-[3]"
+                    />
+                    <Input
+                      value={bdDay}
+                      onChange={(e) => setBdDay(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                      placeholder="일"
+                      inputMode="numeric"
+                      className="flex-[3]"
+                    />
+                  </div>
                 </ModalField>
               </div>
             </div>
@@ -212,7 +248,7 @@ export default function Profile() {
             {/* 푸터 */}
             <div
               className="flex items-center gap-3 px-5 py-4"
-              style={{ borderTop: '1px solid var(--color-border)' }}
+              style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
             >
               <Button onClick={save} loading={saving}>저장</Button>
               {saved && (

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, LogIn, LogOut, UserX, X, Plus } from 'lucide-react'
+import { ArrowLeft, LogIn, LogOut, UserX, X, Plus, Crown } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useUser } from '../hooks/useUser'
 import { useIsMobile } from '../hooks/useIsMobile'
@@ -28,7 +28,6 @@ export default function MemberDetail() {
 
   // 칭호 관리 (관리자)
   const [allTitles, setAllTitles] = useState<TitleItem[]>([])
-  const [selectedTitle, setSelectedTitle] = useState('')
   const [titleSaving, setTitleSaving] = useState(false)
 
   const kickerIds = useMemo(() => {
@@ -71,15 +70,15 @@ export default function MemberDetail() {
 
   const kickCount = user.logs.exit.filter((e) => e.cause === '강퇴').length
 
-  const addTitle = async () => {
-    if (!selectedTitle || user.titles.includes(selectedTitle)) return
+  const addTitle = async (title: string) => {
+    if (!title || user.titles.includes(title)) return
     setTitleSaving(true)
-    const newTitles = [...user.titles, selectedTitle]
+    const newTitles = [...user.titles, title]
     const { error } = await supabase
       .from('users')
       .update({ titles: newTitles })
       .eq('id', user.id)
-    if (!error) { refetch?.(); setSelectedTitle('') }
+    if (!error) refetch?.()
     setTitleSaving(false)
   }
 
@@ -140,72 +139,74 @@ export default function MemberDetail() {
       {/* 관리자 칭호 배정 */}
       {isAdmin && (
         <Card className="mb-5">
-          <div className="mb-3 text-xs font-medium text-[--color-text-muted]">칭호 관리</div>
+          <div className="mb-3 text-sm font-medium text-[--color-text]">칭호 관리</div>
 
-          {/* 현재 칭호 목록 */}
-          <div className="mb-3 flex flex-wrap gap-2">
+          {/* 보유 칭호 */}
+          <div className="mb-1.5 text-xs text-[--color-text-muted]">보유 칭호</div>
+          <div className="mb-4 flex flex-wrap gap-2">
             {user.titles.length === 0 && (
               <span className="text-xs text-[--color-text-muted]">배정된 칭호 없음</span>
             )}
-            {user.titles.map((t) => (
-              <span
-                key={t}
-                className={cn(
-                  'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium',
-                  t === user.title
-                    ? 'bg-[--color-accent]/15 text-[--color-accent]'
-                    : 'bg-[--color-surface-2] text-[--color-text-muted]',
-                )}
-              >
-                <button
-                  type="button"
-                  onClick={() => setActiveTitle(t)}
-                  disabled={t === user.title || titleSaving}
-                  className="disabled:opacity-40"
-                  aria-label="대표 칭호로 설정"
+            {user.titles.map((t) => {
+              const isActive = t === user.title
+              return (
+                <span
+                  key={t}
+                  className={cn(
+                    'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
+                    isActive
+                      ? 'border-[--color-accent]/30 bg-[--color-accent]/15 text-[--color-accent]'
+                      : 'border-[--color-border] bg-[--color-surface-2] text-[--color-text]',
+                  )}
                 >
-                  {t}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => removeTitle(t)}
-                  disabled={titleSaving}
-                  aria-label={`${t} 제거`}
-                  className="text-[--color-text-muted] hover:text-red-400 disabled:opacity-40"
-                >
-                  <X size={11} />
-                </button>
-              </span>
-            ))}
+                  <button
+                    type="button"
+                    onClick={() => !isActive && setActiveTitle(t)}
+                    disabled={isActive || titleSaving}
+                    title={isActive ? '대표 칭호' : '대표 칭호로 설정'}
+                    className="flex items-center gap-1 disabled:cursor-default"
+                    aria-label={isActive ? '대표 칭호' : `${t}을(를) 대표 칭호로 설정`}
+                  >
+                    <Crown
+                      size={10}
+                      className={isActive ? 'text-[--color-accent]' : 'text-[--color-text-muted] opacity-30'}
+                    />
+                    {t}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeTitle(t)}
+                    disabled={titleSaving}
+                    aria-label={`${t} 제거`}
+                    className="ml-0.5 rounded-full p-0.5 text-[--color-text-muted] transition-colors hover:bg-red-500/20 hover:text-red-400 disabled:opacity-40"
+                  >
+                    <X size={10} />
+                  </button>
+                </span>
+              )
+            })}
           </div>
 
-          {/* 칭호 추가 */}
+          {/* 추가 가능한 칭호 */}
           {availableToAdd.length > 0 && (
-            <div className="flex gap-2">
-              <select
-                value={selectedTitle}
-                onChange={(e) => setSelectedTitle(e.target.value)}
-                className="flex-1 rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none"
-              >
-                <option value="">칭호 선택</option>
+            <>
+              <div className="mb-2 text-xs text-[--color-text-muted]">추가 가능한 칭호</div>
+              <div className="flex flex-wrap gap-2">
                 {availableToAdd.map((t) => (
-                  <option key={t.id} value={t.name}>{t.name}</option>
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => addTitle(t.name)}
+                    disabled={titleSaving}
+                    className="inline-flex items-center gap-1 rounded-full border border-dashed border-[--color-border] px-2.5 py-1 text-xs text-[--color-text-muted] transition-colors hover:border-[--color-accent]/50 hover:text-[--color-accent] disabled:opacity-40"
+                  >
+                    <Plus size={10} />
+                    {t.name}
+                  </button>
                 ))}
-              </select>
-              <button
-                type="button"
-                onClick={addTitle}
-                disabled={!selectedTitle || titleSaving}
-                aria-label="칭호 추가"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[--color-accent]/10 text-[--color-accent] transition-colors hover:bg-[--color-accent]/20 disabled:opacity-40"
-              >
-                <Plus size={16} />
-              </button>
-            </div>
+              </div>
+            </>
           )}
-          <p className="mt-2 text-[10px] text-[--color-text-muted]">
-            칭호 이름을 클릭하면 대표 칭호로 설정됩니다
-          </p>
         </Card>
       )}
 

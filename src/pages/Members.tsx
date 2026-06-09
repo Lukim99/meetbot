@@ -82,7 +82,7 @@ export default function Members() {
       <Input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="이름 또는 카카오 이름 검색"
+        placeholder="카카오톡 닉네임 또는 핸들 검색"
         className="mb-3"
       />
 

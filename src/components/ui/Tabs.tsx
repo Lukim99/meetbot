@@ -8,7 +8,7 @@ interface TabsProps {
 
 export function Tabs({ tabs, active, onChange }: TabsProps) {
   return (
-    <div className="flex gap-1 border-b border-[--color-border] overflow-x-auto">
+    <div className="flex gap-1 overflow-x-auto" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
       {tabs.map((tab, i) => (
         <button
           key={tab}

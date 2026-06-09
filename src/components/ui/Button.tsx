@@ -13,11 +13,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-[--color-accent] text-white font-semibold hover:bg-[--color-accent-dim] shadow-[0_0_16px_rgba(124,142,245,0.25)] hover:shadow-[0_0_22px_rgba(124,142,245,0.38)]',
+    'bg-gradient-to-br from-[#818cf8] to-[#6366f1] text-white font-semibold shadow-[0_2px_16px_rgba(129,140,248,0.22)] hover:shadow-[0_3px_24px_rgba(129,140,248,0.38)] hover:brightness-[1.07]',
   ghost:
-    'bg-transparent border border-[--color-border] text-[--color-text] hover:bg-[--color-surface-2] hover:border-[--color-text-muted]/25',
+    'border border-white/[.10] bg-white/[.04] text-[--color-text] hover:bg-white/[.08] hover:border-white/[.18]',
   danger:
-    'bg-transparent border border-red-800/60 text-red-400 hover:bg-red-500/10 hover:border-red-600/60',
+    'border border-red-500/25 bg-red-500/[.08] text-red-400 hover:bg-red-500/[.14] hover:border-red-400/40',
 }
 
 export function Button({
@@ -34,7 +34,7 @@ export function Button({
       {...rest}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
+        'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-40',
         variants[variant],
         fullWidth && 'w-full',
         className,
