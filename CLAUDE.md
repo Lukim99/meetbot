@@ -32,8 +32,8 @@ A web application that surfaces data collected by a KakaoTalk bot (entry/exit ev
   --color-bg:         #0f1117;
   --color-surface:    #161a26;
   --color-surface-2:  #1e2336;
-  --color-border:        #242832;
-  --color-border-strong: #333845;
+  --color-border:        #191c23;
+  --color-border-strong: #232730;
   --color-text:       #dce4f5;
   --color-text-muted: #6b7899;
 }
@@ -59,8 +59,8 @@ body {
 | `--color-bg` | `#0f1117` | page background |
 | `--color-surface` | `#161a26` | cards, sidebar, modals |
 | `--color-surface-2` | `#1e2336` | inputs, table rows, nested surfaces |
-| `--color-border` | `#242832` | all borders / dividers / hairlines (neutral dark gray) |
-| `--color-border-strong` | `#333845` | hover / selected / emphasized borders |
+| `--color-border` | `#191c23` | all borders / dividers / hairlines (very dark, near-bg) |
+| `--color-border-strong` | `#232730` | hover / selected / emphasized borders |
 | `--color-text` | `#dce4f5` | primary text |
 | `--color-text-muted` | `#6b7899` | secondary text, labels, placeholders |
 
