@@ -6,7 +6,8 @@
   --color-bg:         #0f1117;
   --color-surface:    #161a26;
   --color-surface-2:  #1e2336;
-  --color-border:     #272d42;
+  --color-border:        #242832;
+  --color-border-strong: #333845;
   --color-text:       #dce4f5;
   --color-text-muted: #6b7899;
 }
@@ -52,5 +53,5 @@ body {
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a4160;
+  background: var(--color-border-strong);
 }

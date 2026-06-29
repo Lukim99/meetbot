@@ -61,7 +61,7 @@ export default function Login() {
         <form
           onSubmit={onSubmit}
           className="flex flex-col gap-4 rounded-2xl bg-[--color-surface] p-6 shadow-[0_4px_32px_rgba(0,0,0,0.5)]"
-          style={{ border: '1px solid rgba(255,255,255,0.07)' }}
+          style={{ border: '1px solid var(--color-border)' }}
         >
           <div>
             <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">

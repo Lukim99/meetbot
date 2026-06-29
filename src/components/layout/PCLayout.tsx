@@ -33,12 +33,12 @@ export function PCLayout() {
         {/* sidebar */}
         <aside
           className="flex w-56 shrink-0 flex-col bg-[--color-surface]"
-          style={{ borderRight: '1px solid rgba(255,255,255,0.06)' }}
+          style={{ borderRight: '1px solid var(--color-border)' }}
         >
           {/* logo */}
           <div
             className="flex h-14 items-center gap-2.5 px-4"
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+            style={{ borderBottom: '1px solid var(--color-border)' }}
           >
             <div
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
@@ -60,7 +60,7 @@ export function PCLayout() {
 
             {isAdmin && (
               <>
-                <div className="my-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
+                <div className="my-2" style={{ borderTop: '1px solid var(--color-border)' }} />
                 {adminItems.map(({ label, icon: Icon, path }) => (
                   <NavLink key={path} to={path} className={navClass}>
                     <Icon size={16} />
@@ -72,11 +72,11 @@ export function PCLayout() {
           </nav>
 
           {/* user card */}
-          <div className="p-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="p-3" style={{ borderTop: '1px solid var(--color-border)' }}>
             <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
               <div className="relative shrink-0">
                 {user?.profile_image ? (
-                  <img src={user.profile_image} alt={user.name} className="h-8 w-8 rounded-full object-cover ring-1 ring-white/10" />
+                  <img src={user.profile_image} alt={user.name} className="h-8 w-8 rounded-full object-cover ring-1 ring-[--color-border]" />
                 ) : (
                   <Avatar name={user?.name ?? '?'} size={32} />
                 )}

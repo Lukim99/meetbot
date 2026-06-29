@@ -21,7 +21,7 @@ export function MobileLayout() {
             background: 'rgba(22,26,38,0.92)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            borderTop: '1px solid rgba(255,255,255,0.06)',
+            borderTop: '1px solid var(--color-border)',
           }}
         >
           {items.map(({ label, icon: Icon, path }) => (

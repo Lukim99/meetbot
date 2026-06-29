@@ -61,7 +61,7 @@ function toTimeStr(iso: string | null | undefined): string {
 }
 
 const fieldCls =
-  'rounded-lg border border-white/[.07] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none transition-colors'
+  'rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none transition-colors'
 
 export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit, submitting }: Props) {
   const isEdit = !!meeting
@@ -120,7 +120,7 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
     >
       <div
         className="mx-auto w-full max-w-md overflow-hidden rounded-t-2xl bg-[--color-surface] shadow-2xl sm:rounded-2xl"
-        style={{ border: '1px solid rgba(255,255,255,0.08)' }}
+        style={{ border: '1px solid var(--color-border)' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="h-[3px] bg-gradient-to-r from-[#818cf8] to-[#6366f1]" />
@@ -216,7 +216,7 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
               onChange={(e) => setDesc(e.target.value)}
               rows={2}
               placeholder="장소나 메모를 남겨보세요"
-              className="w-full resize-none rounded-lg border border-white/[.07] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] placeholder:text-[--color-text-muted] transition-colors focus:border-[--color-accent] focus:outline-none"
+              className="w-full resize-none rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] placeholder:text-[--color-text-muted] transition-colors focus:border-[--color-accent] focus:outline-none"
             />
           </div>
 
@@ -269,7 +269,7 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
                   'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors',
                   joinSelf
                     ? 'border-[--color-accent] bg-[--color-accent]/20'
-                    : 'border-white/[.15] bg-[--color-surface-2]',
+                    : 'border-[--color-border-strong] bg-[--color-surface-2]',
                 )}
               >
                 {joinSelf && <Check size={10} className="text-[--color-accent]" />}

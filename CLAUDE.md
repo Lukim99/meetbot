@@ -32,7 +32,8 @@ A web application that surfaces data collected by a KakaoTalk bot (entry/exit ev
   --color-bg:         #0f1117;
   --color-surface:    #161a26;
   --color-surface-2:  #1e2336;
-  --color-border:     #272d42;
+  --color-border:        #242832;
+  --color-border-strong: #333845;
   --color-text:       #dce4f5;
   --color-text-muted: #6b7899;
 }
@@ -58,11 +59,12 @@ body {
 | `--color-bg` | `#0f1117` | page background |
 | `--color-surface` | `#161a26` | cards, sidebar, modals |
 | `--color-surface-2` | `#1e2336` | inputs, table rows, nested surfaces |
-| `--color-border` | `#272d42` | fallback borders (prefer `rgba(255,255,255,0.06)` inline) |
+| `--color-border` | `#242832` | all borders / dividers / hairlines (neutral dark gray) |
+| `--color-border-strong` | `#333845` | hover / selected / emphasized borders |
 | `--color-text` | `#dce4f5` | primary text |
 | `--color-text-muted` | `#6b7899` | secondary text, labels, placeholders |
 
-**Rule:** Very dark background everywhere. No light mode. Accent (#818cf8) is bright indigo — use it sparingly. Borders should feel nearly invisible; prefer `rgba(255,255,255,0.06~0.10)` inline style for structural dividers rather than `border-[--color-border]`.
+**Rule:** Very dark background everywhere. No light mode. Accent (#818cf8) is bright indigo — use it sparingly. Borders should feel nearly invisible but stay a neutral dark gray — never a white tint (white-on-dark hairlines read as harsh/glary). Always use `border-[--color-border]` (or `var(--color-border)` inline) for dividers, and `--color-border-strong` for hover/selected emphasis. Do NOT use `border-white/[...]` or `rgba(255,255,255,...)` for lines.
 
 **CSS variable + background caveat:** `bg-[--color-accent]` may not generate CSS reliably in all Tailwind v4 build configurations. For critical background fills (e.g. today's date circle), prefer `style={{ backgroundColor: 'var(--color-accent)' }}` inline. Text/border/ring classes using CSS vars are fine.
 

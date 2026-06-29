@@ -155,7 +155,7 @@ export default function Profile() {
             ))}
           </div>
 
-          <div className="pt-4 text-xs text-[--color-text-muted]" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="pt-4 text-xs text-[--color-text-muted]" style={{ borderTop: '1px solid var(--color-border)' }}>
             채팅 {user.chat_count.toLocaleString('ko-KR')} · 가입일 {formatDate(user.created_at)}
           </div>
         </Card>
@@ -172,12 +172,12 @@ export default function Profile() {
             style={{
               background: 'var(--color-surface-2)',
               boxShadow: '0 32px 64px rgba(0,0,0,0.6)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid var(--color-border)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* 헤더 */}
-            <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
               <h2 className="text-sm font-semibold text-[--color-text]">프로필 설정</h2>
               <button
                 type="button"
@@ -194,9 +194,9 @@ export default function Profile() {
 
               {/* 칭호 */}
               {user.titles && user.titles.length > 0 && (
-                <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
                   <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[--color-text-muted]">대표 칭호</div>
-                  <div className="overflow-hidden rounded-xl" style={{ background: 'var(--color-surface)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div className="overflow-hidden rounded-xl" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
                     <TitleRow
                       label="없음"
                       selected={activeTitle === ''}
@@ -204,7 +204,7 @@ export default function Profile() {
                       muted
                     />
                     {user.titles.map((t, i) => (
-                      <div key={t} style={i < user.titles.length - 1 ? { borderBottom: '1px solid rgba(255,255,255,0.06)' } : undefined}>
+                      <div key={t} style={i < user.titles.length - 1 ? { borderBottom: '1px solid var(--color-border)' } : undefined}>
                         <TitleRow
                           label={t}
                           selected={t === activeTitle}
@@ -225,7 +225,7 @@ export default function Profile() {
                     className="w-full rounded-lg px-3 py-2 text-sm text-[--color-text] focus:outline-none"
                     style={{
                       background: 'var(--color-surface)',
-                      border: '1px solid rgba(255,255,255,0.07)',
+                      border: '1px solid var(--color-border)',
                     }}
                   >
                     <option value="">없음</option>
@@ -282,7 +282,7 @@ export default function Profile() {
             {/* 푸터 */}
             <div
               className="flex items-center gap-3 px-5 py-4"
-              style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+              style={{ borderTop: '1px solid var(--color-border)' }}
             >
               <Button onClick={save} loading={saving}>저장</Button>
               {saved && (

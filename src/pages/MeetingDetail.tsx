@@ -196,7 +196,7 @@ export default function MeetingDetail() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setEditOpen(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-white/[.10] px-3 py-1.5 text-xs text-[--color-text-muted] transition-colors hover:border-[--color-accent]/50 hover:text-[--color-accent]"
+              className="flex items-center gap-1.5 rounded-lg border border-[--color-border] px-3 py-1.5 text-xs text-[--color-text-muted] transition-colors hover:border-[--color-accent]/50 hover:text-[--color-accent]"
             >
               <Edit2 size={12} />
               수정
@@ -248,7 +248,7 @@ export default function MeetingDetail() {
         {isJoined ? (
           <button
             onClick={leaveMeeting}
-            className="rounded-lg border border-white/[.10] px-4 py-2 text-sm text-[--color-text-muted] transition-colors hover:border-red-800/60 hover:text-red-400"
+            className="rounded-lg border border-[--color-border] px-4 py-2 text-sm text-[--color-text-muted] transition-colors hover:border-red-800/60 hover:text-red-400"
           >
             참가 취소
           </button>
@@ -318,7 +318,7 @@ export default function MeetingDetail() {
             )}
           </div>
 
-          <div className="mt-3 flex flex-col gap-2 pt-3 sm:flex-row" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="mt-3 flex flex-col gap-2 pt-3 sm:flex-row" style={{ borderTop: '1px solid var(--color-border)' }}>
             <Input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
@@ -335,7 +335,7 @@ export default function MeetingDetail() {
             <select
               value={payer}
               onChange={(e) => setPayer(e.target.value)}
-              className="rounded-lg border border-white/[.07] bg-[--color-surface-2] px-3 py-2 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none sm:w-32"
+              className="rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none sm:w-32"
             >
               <option value="">공동 (1/N)</option>
               {members.map((m) => (

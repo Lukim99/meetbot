@@ -110,8 +110,8 @@ function DayPanel({
             : panelIn ? 'translate-x-0' : 'translate-x-full',
         )}
         style={isMobile
-          ? { borderTop: '1px solid rgba(255,255,255,0.08)' }
-          : { borderLeft: '1px solid rgba(255,255,255,0.08)' }
+          ? { borderTop: '1px solid var(--color-border)' }
+          : { borderLeft: '1px solid var(--color-border)' }
         }
       >
         {isMobile && (
@@ -120,7 +120,7 @@ function DayPanel({
           </div>
         )}
 
-        <div className="sticky top-0 z-10 flex items-center justify-between bg-[--color-surface] px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="sticky top-0 z-10 flex items-center justify-between bg-[--color-surface] px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <div>
             <p className="text-[10px] uppercase tracking-widest text-[--color-text-muted]">선택한 날짜</p>
             <h2 className="mt-0.5 text-base font-semibold text-[--color-text]">{label}</h2>
@@ -175,7 +175,7 @@ function DayPanel({
             const isFull = mtg.max_members != null && count >= mtg.max_members
 
             return (
-              <div key={mtg.id} className="rounded-xl bg-[--color-surface-2] p-4" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div key={mtg.id} className="rounded-xl bg-[--color-surface-2] p-4" style={{ border: '1px solid var(--color-border)' }}>
                 <div className="mb-2 flex items-start justify-between gap-2">
                   <button
                     onClick={() => onGo(mtg.id)}
@@ -234,7 +234,7 @@ function DayPanel({
                 {isJoined ? (
                   <button
                     onClick={() => onLeave(mtg.id)}
-                    className="w-full rounded-lg border border-white/[.10] py-1.5 text-xs text-[--color-text-muted] transition-colors hover:border-red-800/60 hover:text-red-400"
+                    className="w-full rounded-lg border border-[--color-border] py-1.5 text-xs text-[--color-text-muted] transition-colors hover:border-red-800/60 hover:text-red-400"
                   >
                     참가 취소
                   </button>

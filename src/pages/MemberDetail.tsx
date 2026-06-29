@@ -258,7 +258,7 @@ export default function MemberDetail() {
                   <select
                     value={editMbti}
                     onChange={(e) => setEditMbti(e.target.value)}
-                    className="w-full rounded-lg border border-white/[.07] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none focus:ring-2 focus:ring-[--color-accent]/[.12]"
+                    className="w-full rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none focus:ring-2 focus:ring-[--color-accent]/[.12]"
                   >
                     <option value="">없음</option>
                     {MBTI_TYPES.map((t) => (
