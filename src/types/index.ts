@@ -36,6 +36,13 @@ export interface User {
   titles: string[]
   title: string
   mbti: string | null
+  drink_capacity: string | null    // 주량
+  meetup_available: string | null   // 벙참가능유무
+  meetup_time: string | null        // 벙참가능시간
+  self_style: string | null         // 본인 스타일
+  ideal_type: string | null         // 이상형
+  status_msg: string | null         // 현 상태
+  blood_type: string | null         // 혈액형
   profile_image: string | null
   exp: number
   level: number
@@ -49,6 +56,14 @@ export interface TitleItem {
   id: string
   name: string
   created_at: string
+}
+
+export interface UserWarning {
+  id: string
+  user_id: string
+  reason: string
+  warned_by: string        // 경고한 유저 id
+  created_at: string       // 경고일자
 }
 
 export interface Meeting {
@@ -96,6 +111,21 @@ export interface WelcomeMessage {
 
 export const PERM_OWNER = 1
 export const PERM_ADMIN = 2
+
+// 유저가 자유롭게 입력하는 평문 프로필 필드 (각 최대 30자)
+export const PROFILE_TEXT_FIELDS = [
+  { key: 'drink_capacity', label: '주량', placeholder: '예: 소주 1병' },
+  { key: 'meetup_available', label: '벙참가능유무', placeholder: '예: 가능' },
+  { key: 'meetup_time', label: '벙참가능시간', placeholder: '예: 평일 저녁' },
+  { key: 'self_style', label: '본인 스타일', placeholder: '예: 활발한 편' },
+  { key: 'ideal_type', label: '이상형', placeholder: '예: 다정한 사람' },
+  { key: 'status_msg', label: '현 상태', placeholder: '예: 모쏠' },
+  { key: 'blood_type', label: '혈액형', placeholder: '예: A형' },
+] as const
+
+export const PROFILE_FIELD_MAX = 30
+
+export type ProfileTextFieldKey = (typeof PROFILE_TEXT_FIELDS)[number]['key']
 
 export const MBTI_TYPES = [
   'INTJ', 'INTP', 'ENTJ', 'ENTP',

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Check, Settings, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuthStore } from '../store/authStore'
-import { MBTI_TYPES, type User } from '../types'
+import { MBTI_TYPES, PROFILE_TEXT_FIELDS, PROFILE_FIELD_MAX, type ProfileTextFieldKey, type User } from '../types'
 import { Page, PageHeader } from '../components/ui/Page'
 import { Card } from '../components/ui/Card'
 import { Input } from '../components/ui/Input'
@@ -24,6 +24,9 @@ export default function Profile() {
   const [bdMonth, setBdMonth] = useState('')
   const [bdDay, setBdDay] = useState('')
   const [activeTitle, setActiveTitle] = useState('')
+  const [textFields, setTextFields] = useState<Record<ProfileTextFieldKey, string>>(
+    () => Object.fromEntries(PROFILE_TEXT_FIELDS.map((f) => [f.key, ''])) as Record<ProfileTextFieldKey, string>,
+  )
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +48,11 @@ export default function Profile() {
   const openModal = () => {
     setMbti(user.mbti ?? '')
     setActiveTitle(user.title ?? '')
+    setTextFields(
+      Object.fromEntries(
+        PROFILE_TEXT_FIELDS.map((f) => [f.key, (user[f.key] as string | null) ?? '']),
+      ) as Record<ProfileTextFieldKey, string>,
+    )
     const bd = user.birthday ?? ''
     if (bd.length === 10 && bd[4] === '.') {
       const parts = bd.split('.')
@@ -73,9 +81,12 @@ export default function Profile() {
     setSaved(false)
     setError(null)
     const birthday = buildBirthday()
+    const textUpdates = Object.fromEntries(
+      PROFILE_TEXT_FIELDS.map((f) => [f.key, textFields[f.key].trim() || null]),
+    )
     const { data, error } = await supabase
       .from('users')
-      .update({ mbti: mbti || null, birthday, title: activeTitle, updated_at: new Date().toISOString() })
+      .update({ mbti: mbti || null, birthday, title: activeTitle, ...textUpdates, updated_at: new Date().toISOString() })
       .eq('id', user.id)
       .select('*')
       .maybeSingle()
@@ -135,6 +146,13 @@ export default function Profile() {
           <div className="flex flex-col gap-2">
             <InfoRow label="MBTI" value={user.mbti ?? '미설정'} />
             <InfoRow label="생일" value={displayBirthday ?? '미설정'} />
+            {PROFILE_TEXT_FIELDS.map((f) => (
+              <InfoRow
+                key={f.key}
+                label={f.label}
+                value={(user[f.key] as string | null) || '미설정'}
+              />
+            ))}
           </div>
 
           <div className="pt-4 text-xs text-[--color-text-muted]" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
@@ -242,6 +260,22 @@ export default function Profile() {
                     />
                   </div>
                 </ModalField>
+
+                {PROFILE_TEXT_FIELDS.map((f) => (
+                  <ModalField key={f.key} label={f.label}>
+                    <Input
+                      value={textFields[f.key]}
+                      onChange={(e) =>
+                        setTextFields((prev) => ({
+                          ...prev,
+                          [f.key]: e.target.value.slice(0, PROFILE_FIELD_MAX),
+                        }))
+                      }
+                      placeholder={f.placeholder}
+                      maxLength={PROFILE_FIELD_MAX}
+                    />
+                  </ModalField>
+                ))}
               </div>
             </div>
 

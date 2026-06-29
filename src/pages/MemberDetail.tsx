@@ -1,15 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, LogIn, LogOut, UserX, X, Plus, Crown } from 'lucide-react'
+import { ArrowLeft, LogIn, LogOut, UserX, X, Plus, Crown, AlertTriangle, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useUser } from '../hooks/useUser'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { useAuth } from '../hooks/useAuth'
-import { type TitleItem } from '../types'
+import { PROFILE_TEXT_FIELDS, type TitleItem, type UserWarning } from '../types'
 import { Page } from '../components/ui/Page'
 import { Avatar } from '../components/ui/Avatar'
 import { Badge } from '../components/ui/Badge'
+import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { Input } from '../components/ui/Input'
 import { Tabs } from '../components/ui/Tabs'
 import { Loading, ErrorState } from '../components/ui/States'
 import { formatBirthday, formatDateTime } from '../lib/format'
@@ -21,7 +23,7 @@ export default function MemberDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const isMobile = useIsMobile()
-  const { isAdmin } = useAuth()
+  const { user: me, isAdmin } = useAuth()
   const { user, loading, error, refetch } = useUser(id)
   const [tab, setTab] = useState(0)
   const [kickerNames, setKickerNames] = useState<Record<string, string>>({})
@@ -29,6 +31,38 @@ export default function MemberDetail() {
   // 칭호 관리 (관리자)
   const [allTitles, setAllTitles] = useState<TitleItem[]>([])
   const [titleSaving, setTitleSaving] = useState(false)
+
+  // 경고 시스템
+  const [warnings, setWarnings] = useState<UserWarning[]>([])
+  const [warnerNames, setWarnerNames] = useState<Record<string, string>>({})
+  const [warnReason, setWarnReason] = useState('')
+  const [warnSaving, setWarnSaving] = useState(false)
+
+  const loadWarnings = useCallback(() => {
+    if (!id) return
+    supabase
+      .from('user_warnings')
+      .select('*')
+      .eq('user_id', id)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => setWarnings((data ?? []) as UserWarning[]))
+  }, [id])
+
+  useEffect(() => { loadWarnings() }, [loadWarnings])
+
+  useEffect(() => {
+    const ids = [...new Set(warnings.map((w) => w.warned_by).filter(Boolean) as string[])]
+    if (ids.length === 0) return
+    supabase
+      .from('users')
+      .select('id, name, kakao_name')
+      .in('id', ids)
+      .then(({ data }) => {
+        const map: Record<string, string> = {}
+        for (const u of data ?? []) map[u.id] = u.kakao_name || u.name
+        setWarnerNames(map)
+      })
+  }, [warnings])
 
   const kickerIds = useMemo(() => {
     if (!user) return []
@@ -104,6 +138,27 @@ export default function MemberDetail() {
 
   const availableToAdd = allTitles.filter((t) => !user.titles.includes(t.name))
 
+  const addWarning = async () => {
+    const reason = warnReason.trim()
+    if (!reason || !me) return
+    setWarnSaving(true)
+    const { error } = await supabase
+      .from('user_warnings')
+      .insert({ user_id: user.id, reason, warned_by: me.id })
+    if (!error) {
+      setWarnReason('')
+      loadWarnings()
+    }
+    setWarnSaving(false)
+  }
+
+  const removeWarning = async (warningId: string) => {
+    setWarnSaving(true)
+    const { error } = await supabase.from('user_warnings').delete().eq('id', warningId)
+    if (!error) loadWarnings()
+    setWarnSaving(false)
+  }
+
   return (
     <Page>
       <button
@@ -128,6 +183,12 @@ export default function MemberDetail() {
             </h1>
             {user.title && <Badge tone="accent">{user.title}</Badge>}
             {user.mbti && <Badge tone="neutral">{user.mbti}</Badge>}
+            {isAdmin && warnings.length > 0 && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-red-500/25 bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-400">
+                <AlertTriangle size={11} />
+                경고 {warnings.length}회
+              </span>
+            )}
           </div>
           <div className="mt-0.5 text-xs text-[--color-text-muted]">@{user.name}</div>
           <div className="mt-1 text-sm text-[--color-text-muted]">
@@ -135,6 +196,21 @@ export default function MemberDetail() {
           </div>
         </div>
       </Card>
+
+      {/* 프로필 정보 */}
+      {PROFILE_TEXT_FIELDS.some((f) => user[f.key]) && (
+        <Card className="mb-5">
+          <div className="mb-3 text-sm font-medium text-[--color-text]">프로필 정보</div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {PROFILE_TEXT_FIELDS.filter((f) => user[f.key]).map((f) => (
+              <div key={f.key} className="flex items-center justify-between gap-3 text-sm">
+                <span className="shrink-0 text-[--color-text-muted]">{f.label}</span>
+                <span className="truncate text-[--color-text]">{user[f.key] as string}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* 관리자 칭호 배정 */}
       {isAdmin && (
@@ -206,6 +282,69 @@ export default function MemberDetail() {
                 ))}
               </div>
             </>
+          )}
+        </Card>
+      )}
+
+      {/* 경고 관리 (permission 1 또는 2) */}
+      {isAdmin && (
+        <Card className="mb-5">
+          <div className="mb-3 flex items-center gap-1.5 text-sm font-medium text-[--color-text]">
+            <AlertTriangle size={15} className="text-red-400" />
+            경고 관리
+            {warnings.length > 0 && (
+              <span className="text-[--color-text-muted]">· 누적 {warnings.length}회</span>
+            )}
+          </div>
+
+          {/* 경고 부여 */}
+          <div className="mb-4 flex gap-2">
+            <Input
+              value={warnReason}
+              onChange={(e) => setWarnReason(e.target.value)}
+              placeholder="경고 사유 입력"
+              onKeyDown={(e) => { if (e.key === 'Enter') addWarning() }}
+            />
+            <Button
+              variant="danger"
+              onClick={addWarning}
+              loading={warnSaving}
+              disabled={!warnReason.trim()}
+              className="shrink-0"
+            >
+              경고 부여
+            </Button>
+          </div>
+
+          {/* 경고 내역 */}
+          {warnings.length === 0 ? (
+            <p className="text-xs text-[--color-text-muted]">경고 내역이 없습니다</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {warnings.map((w) => (
+                <div
+                  key={w.id}
+                  className="flex items-start gap-3 rounded-lg border-l-2 border-l-red-500 bg-[--color-surface] px-4 py-3"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm text-[--color-text]">{w.reason}</div>
+                    <div className="mt-0.5 text-xs text-[--color-text-muted]">
+                      {w.warned_by ? `${warnerNames[w.warned_by] ?? w.warned_by} · ` : ''}
+                      {formatDateTime(w.created_at)}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeWarning(w.id)}
+                    disabled={warnSaving}
+                    aria-label="경고 삭제"
+                    className="shrink-0 rounded-md p-1 text-[--color-text-muted] transition-colors hover:bg-red-500/20 hover:text-red-400 disabled:opacity-40"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
         </Card>
       )}

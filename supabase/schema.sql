@@ -14,8 +14,23 @@ create table if not exists users (
   titles text[] default '{}',
   title text default '',
   mbti text,                                -- [web] 16 types or null
+  drink_capacity text,                      -- [web] 주량 (평문, 최대 30자)
+  meetup_available text,                     -- [web] 벙참가능유무 (평문, 최대 30자)
+  meetup_time text,                          -- [web] 벙참가능시간 (평문, 최대 30자)
+  self_style text,                           -- [web] 본인 스타일 (평문, 최대 30자)
+  ideal_type text,                           -- [web] 이상형 (평문, 최대 30자)
+  status_msg text,                           -- [web] 현 상태 (평문, 최대 30자)
+  blood_type text,                           -- [web] 혈액형 (평문, 최대 30자)
   created_at timestamptz default now(),
   updated_at timestamptz default now()
+);
+
+create table if not exists user_warnings (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null references users(id) on delete cascade,  -- [web] 경고 대상
+  reason text not null,                                          -- [web] 경고 사유
+  warned_by text references users(id),                           -- [web] 경고자
+  created_at timestamptz default now()                           -- [web] 경고일자
 );
 
 create table if not exists meetings (
