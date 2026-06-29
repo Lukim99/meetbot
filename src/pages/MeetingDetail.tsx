@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Clock, Edit2, Plus, Trash2, Users } from 'lucide-react'
+import { ArrowLeft, Clock, Edit2, Plus, Trash2, Users, UserPlus } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { useAuth } from '../hooks/useAuth'
-import type { Meeting, MeetingItem, User } from '../types'
+import { hasLeft } from '../lib/userStatus'
+import type { Meeting, MeetingItem, User, UserLogs } from '../types'
 import { Page } from '../components/ui/Page'
 import { Card } from '../components/ui/Card'
 import { Avatar } from '../components/ui/Avatar'
@@ -61,6 +62,9 @@ export default function MeetingDetail() {
   const [amount, setAmount] = useState('')
   const [payer, setPayer] = useState('')
 
+  const [candidates, setCandidates] = useState<{ id: string; name: string; kakao_name: string; logs: UserLogs }[]>([])
+  const [addUserId, setAddUserId] = useState('')
+
   const [editOpen, setEditOpen] = useState(false)
   const [saving, setSaving] = useState(false)
 
@@ -80,6 +84,19 @@ export default function MeetingDetail() {
   }, [id])
 
   useEffect(() => { load() }, [load])
+
+  // 모임장/관리자만 참가자 추가 후보를 불러온다 (퇴장한 유저 제외)
+  useEffect(() => {
+    const isHost = !!(user && meeting?.host_id && user.id === meeting.host_id)
+    if (!isHost && !isAdmin) return
+    supabase
+      .from('users')
+      .select('id, name, kakao_name, logs')
+      .order('name')
+      .then(({ data }) => {
+        setCandidates(((data ?? []) as typeof candidates).filter((u) => !hasLeft(u.logs)))
+      })
+  }, [user, meeting, isAdmin])
 
   const nameOf = useCallback(
     (uid: string | null) => (uid ? members.find((m) => m.id === uid)?.name ?? uid : '공동'),
@@ -113,6 +130,19 @@ export default function MeetingDetail() {
       }
       load()
     }
+  }
+
+  const addParticipant = async () => {
+    if (!addUserId) return
+    const { error: err } = await supabase
+      .from('meeting_members')
+      .insert({ meeting_id: meeting.id, user_id: addUserId })
+    if (err) { setError(err.message); return }
+    if (!meeting.host_id) {
+      await supabase.from('meetings').update({ host_id: addUserId }).eq('id', meeting.id)
+    }
+    setAddUserId('')
+    load()
   }
 
   const leaveMeeting = async () => {
@@ -288,6 +318,26 @@ export default function MeetingDetail() {
               <p className="text-sm text-[var(--color-text-muted)]">아직 참가자가 없습니다</p>
             )}
           </div>
+
+          {canEdit && (
+            <div className="mt-3 flex gap-2 pt-3" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <select
+                value={addUserId}
+                onChange={(e) => setAddUserId(e.target.value)}
+                className="min-w-0 flex-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none"
+              >
+                <option value="">참가자 추가…</option>
+                {candidates
+                  .filter((u) => !members.some((m) => m.id === u.id))
+                  .map((u) => (
+                    <option key={u.id} value={u.id}>{u.kakao_name || u.name}</option>
+                  ))}
+              </select>
+              <Button onClick={addParticipant} disabled={!addUserId} className="shrink-0">
+                <UserPlus size={16} />
+              </Button>
+            </div>
+          )}
         </Card>
 
         {/* settlement items */}
@@ -304,13 +354,15 @@ export default function MeetingDetail() {
                   <div className="text-xs text-[var(--color-text-muted)]">{nameOf(it.payer_id)} 지불</div>
                 </div>
                 <span className="shrink-0 text-sm text-[var(--color-text)]">{formatWon(it.amount)}</span>
-                <button
-                  onClick={() => removeItem(it.id)}
-                  aria-label="항목 삭제"
-                  className="shrink-0 text-[var(--color-text-muted)] hover:text-red-400"
-                >
-                  <Trash2 size={14} />
-                </button>
+                {canEdit && (
+                  <button
+                    onClick={() => removeItem(it.id)}
+                    aria-label="항목 삭제"
+                    className="shrink-0 text-[var(--color-text-muted)] hover:text-red-400"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </div>
             ))}
             {items.length === 0 && (
@@ -318,34 +370,36 @@ export default function MeetingDetail() {
             )}
           </div>
 
-          <div className="mt-3 flex flex-col gap-2 pt-3 sm:flex-row" style={{ borderTop: '1px solid var(--color-border)' }}>
-            <Input
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder="항목명"
-              className="sm:flex-1"
-            />
-            <Input
-              value={amount}
-              onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
-              placeholder="금액"
-              inputMode="numeric"
-              className="sm:w-28"
-            />
-            <select
-              value={payer}
-              onChange={(e) => setPayer(e.target.value)}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none sm:w-32"
-            >
-              <option value="">공동 (1/N)</option>
-              {members.map((m) => (
-                <option key={m.id} value={m.id}>{m.name}</option>
-              ))}
-            </select>
-            <Button onClick={addItem} disabled={!label.trim() || !amount} className="shrink-0">
-              <Plus size={16} />
-            </Button>
-          </div>
+          {canEdit && (
+            <div className="mt-3 flex flex-col gap-2 pt-3 sm:flex-row" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <Input
+                value={label}
+                onChange={(e) => setLabel(e.target.value)}
+                placeholder="항목명"
+                className="sm:flex-1"
+              />
+              <Input
+                value={amount}
+                onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
+                placeholder="금액"
+                inputMode="numeric"
+                className="sm:w-28"
+              />
+              <select
+                value={payer}
+                onChange={(e) => setPayer(e.target.value)}
+                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none sm:w-32"
+              >
+                <option value="">공동 (1/N)</option>
+                {members.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name}</option>
+                ))}
+              </select>
+              <Button onClick={addItem} disabled={!label.trim() || !amount} className="shrink-0">
+                <Plus size={16} />
+              </Button>
+            </div>
+          )}
         </Card>
       </div>
 
