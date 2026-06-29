@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, LogIn, LogOut, UserX, X, Plus, Crown, AlertTriangle, Trash2 } from 'lucide-react'
+import { ArrowLeft, LogIn, LogOut, UserX, X, Plus, Crown, AlertTriangle, Trash2, Pencil, Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useUser } from '../hooks/useUser'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { useAuth } from '../hooks/useAuth'
-import { PROFILE_TEXT_FIELDS, type TitleItem, type UserWarning } from '../types'
+import { MBTI_TYPES, PROFILE_TEXT_FIELDS, PROFILE_FIELD_MAX, type ProfileTextFieldKey, type TitleItem, type UserWarning } from '../types'
 import { Page } from '../components/ui/Page'
 import { Avatar } from '../components/ui/Avatar'
 import { Badge } from '../components/ui/Badge'
@@ -31,6 +31,15 @@ export default function MemberDetail() {
   // 칭호 관리 (관리자)
   const [allTitles, setAllTitles] = useState<TitleItem[]>([])
   const [titleSaving, setTitleSaving] = useState(false)
+
+  // 프로필 정보 수정 (관리자)
+  const [editingProfile, setEditingProfile] = useState(false)
+  const [editMbti, setEditMbti] = useState('')
+  const [editFields, setEditFields] = useState<Record<ProfileTextFieldKey, string>>(
+    () => Object.fromEntries(PROFILE_TEXT_FIELDS.map((f) => [f.key, ''])) as Record<ProfileTextFieldKey, string>,
+  )
+  const [profileSaving, setProfileSaving] = useState(false)
+  const [profileError, setProfileError] = useState<string | null>(null)
 
   // 경고 시스템
   const [warnings, setWarnings] = useState<UserWarning[]>([])
@@ -159,6 +168,33 @@ export default function MemberDetail() {
     setWarnSaving(false)
   }
 
+  const startEditProfile = () => {
+    setEditMbti(user.mbti ?? '')
+    setEditFields(
+      Object.fromEntries(
+        PROFILE_TEXT_FIELDS.map((f) => [f.key, (user[f.key] as string | null) ?? '']),
+      ) as Record<ProfileTextFieldKey, string>,
+    )
+    setProfileError(null)
+    setEditingProfile(true)
+  }
+
+  const saveProfile = async () => {
+    setProfileSaving(true)
+    setProfileError(null)
+    const textUpdates = Object.fromEntries(
+      PROFILE_TEXT_FIELDS.map((f) => [f.key, editFields[f.key].trim() || null]),
+    )
+    const { error } = await supabase
+      .from('users')
+      .update({ mbti: editMbti || null, ...textUpdates, updated_at: new Date().toISOString() })
+      .eq('id', user.id)
+    setProfileSaving(false)
+    if (error) { setProfileError(error.message); return }
+    setEditingProfile(false)
+    refetch?.()
+  }
+
   return (
     <Page>
       <button
@@ -198,17 +234,85 @@ export default function MemberDetail() {
       </Card>
 
       {/* 프로필 정보 */}
-      {PROFILE_TEXT_FIELDS.some((f) => user[f.key]) && (
+      {(isAdmin || PROFILE_TEXT_FIELDS.some((f) => user[f.key]) || user.mbti) && (
         <Card className="mb-5">
-          <div className="mb-3 text-sm font-medium text-[--color-text]">프로필 정보</div>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {PROFILE_TEXT_FIELDS.filter((f) => user[f.key]).map((f) => (
-              <div key={f.key} className="flex items-center justify-between gap-3 text-sm">
-                <span className="shrink-0 text-[--color-text-muted]">{f.label}</span>
-                <span className="truncate text-[--color-text]">{user[f.key] as string}</span>
-              </div>
-            ))}
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div className="text-sm font-medium text-[--color-text]">프로필 정보</div>
+            {isAdmin && !editingProfile && (
+              <button
+                type="button"
+                onClick={startEditProfile}
+                className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-[--color-text-muted] transition-colors hover:bg-[--color-surface-2] hover:text-[--color-text]"
+              >
+                <Pencil size={12} />
+                수정
+              </button>
+            )}
           </div>
+
+          {editingProfile ? (
+            <>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <div className="mb-1.5 text-xs text-[--color-text-muted]">MBTI</div>
+                  <select
+                    value={editMbti}
+                    onChange={(e) => setEditMbti(e.target.value)}
+                    className="w-full rounded-lg border border-white/[.07] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none focus:ring-2 focus:ring-[--color-accent]/[.12]"
+                  >
+                    <option value="">없음</option>
+                    {MBTI_TYPES.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+                {PROFILE_TEXT_FIELDS.map((f) => (
+                  <div key={f.key}>
+                    <div className="mb-1.5 text-xs text-[--color-text-muted]">{f.label}</div>
+                    <Input
+                      value={editFields[f.key]}
+                      onChange={(e) =>
+                        setEditFields((prev) => ({ ...prev, [f.key]: e.target.value.slice(0, PROFILE_FIELD_MAX) }))
+                      }
+                      placeholder={f.placeholder}
+                      maxLength={PROFILE_FIELD_MAX}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <Button onClick={saveProfile} loading={profileSaving}>
+                  <Check size={14} />
+                  저장
+                </Button>
+                <Button variant="ghost" onClick={() => setEditingProfile(false)} disabled={profileSaving}>
+                  취소
+                </Button>
+                {profileError && <span className="text-sm text-red-400">{profileError}</span>}
+              </div>
+            </>
+          ) : (
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {user.mbti && (
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="shrink-0 text-[--color-text-muted]">MBTI</span>
+                  <span className="truncate text-[--color-text]">{user.mbti}</span>
+                </div>
+              )}
+              {PROFILE_TEXT_FIELDS.map((f) => {
+                const value = user[f.key] as string | null
+                if (!value && !isAdmin) return null
+                return (
+                  <div key={f.key} className="flex items-center justify-between gap-3 text-sm">
+                    <span className="shrink-0 text-[--color-text-muted]">{f.label}</span>
+                    <span className={cn('truncate', value ? 'text-[--color-text]' : 'text-[--color-text-muted]')}>
+                      {value || '미설정'}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </Card>
       )}
 
