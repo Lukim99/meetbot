@@ -9,6 +9,7 @@ import { Page, PageHeader } from '../components/ui/Page'
 import { Button } from '../components/ui/Button'
 import { Loading, ErrorState } from '../components/ui/States'
 import { MeetingFormModal, type MeetingFormData } from '../components/MeetingFormModal'
+import { sendKakao, buildNewMeetingMessage } from '../lib/notify'
 import { cn } from '../lib/cn'
 
 // ─── types ────────────────────────────────────────────────────────────────────
@@ -433,6 +434,18 @@ export default function Meetings() {
       if (newM && data.joinSelf) {
         await supabase.from('meeting_members').insert({ meeting_id: newM.id, user_id: user.id })
       }
+
+      void sendKakao(
+        buildNewMeetingMessage({
+          name: data.name.trim(),
+          startISO,
+          deadlineISO: deadline,
+          minMembers: data.minMembers ? parseInt(data.minMembers) : null,
+          maxMembers: data.maxMembers ? parseInt(data.maxMembers) : null,
+          hostName: data.joinSelf ? (user.kakao_name || user.name) : null,
+          description: data.desc.trim() || null,
+        }),
+      )
     }
 
     setSubmitting(false)
