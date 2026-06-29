@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Bot, Crown, LogOut } from 'lucide-react'
+import { MessageCircle, Crown, LogOut } from 'lucide-react'
 import { LayoutContext } from '../../lib/layoutContext'
 import { useAuth } from '../../hooks/useAuth'
 import { logout } from '../../lib/auth'
@@ -44,9 +44,9 @@ export function PCLayout() {
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
               style={{ background: 'linear-gradient(135deg,#818cf8,#6366f1)', boxShadow: '0 2px 8px rgba(129,140,248,0.3)' }}
             >
-              <Bot size={14} className="text-white" />
+              <MessageCircle size={14} className="text-white" />
             </div>
-            <span className="text-sm font-semibold tracking-tight text-[var(--color-text)]">모임봇</span>
+            <span className="text-sm font-semibold tracking-tight text-[var(--color-text)]">월루</span>
           </div>
 
           {/* nav */}
@@ -81,12 +81,12 @@ export function PCLayout() {
                   <Avatar name={user?.name ?? '?'} size={32} />
                 )}
                 {isOwner && (
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 ring-[1.5px] ring-[var(--color-surface)]">
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-500 ring-[1.5px] ring-[var(--color-surface)]">
                     <Crown size={7} className="text-white" />
                   </span>
                 )}
                 {!isOwner && isAdmin && (
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-500 ring-[1.5px] ring-[var(--color-surface)]">
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-pink-500 ring-[1.5px] ring-[var(--color-surface)]">
                     <Crown size={7} className="text-white" />
                   </span>
                 )}

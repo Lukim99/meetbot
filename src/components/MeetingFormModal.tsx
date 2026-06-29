@@ -63,6 +63,10 @@ function toTimeStr(iso: string | null | undefined): string {
 const fieldCls =
   'rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none transition-colors'
 
+// 날짜/시간 네이티브 입력: 한국어 로케일의 "오후 12:00" + 아이콘이 잘리지 않도록 패딩을 줄이고 폭을 유연하게
+const dateTimeFieldCls =
+  'min-w-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-2.5 text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none transition-colors'
+
 export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit, submitting }: Props) {
   const isEdit = !!meeting
 
@@ -160,14 +164,14 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
-                className={cn(fieldCls, 'flex-1')}
+                className={cn(dateTimeFieldCls, 'flex-[3]')}
                 style={{ colorScheme: 'dark' }}
               />
               <input
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className={cn(fieldCls, 'w-28')}
+                className={cn(dateTimeFieldCls, 'flex-[2]')}
                 style={{ colorScheme: 'dark' }}
               />
             </div>
@@ -193,14 +197,14 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className={cn(fieldCls, 'flex-1')}
+                  className={cn(dateTimeFieldCls, 'flex-[3]')}
                   style={{ colorScheme: 'dark' }}
                 />
                 <input
                   type="time"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  className={cn(fieldCls, 'w-28')}
+                  className={cn(dateTimeFieldCls, 'flex-[2]')}
                   style={{ colorScheme: 'dark' }}
                 />
               </div>

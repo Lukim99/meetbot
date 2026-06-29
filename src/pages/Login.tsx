@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Bot } from 'lucide-react'
+import { MessageCircle } from 'lucide-react'
 import { login, NeedCodeError } from '../lib/auth'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
@@ -52,7 +52,7 @@ export default function Login() {
             className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl"
             style={{ background: 'linear-gradient(135deg,#818cf8,#6366f1)', boxShadow: '0 4px 20px rgba(129,140,248,0.35)' }}
           >
-            <Bot size={22} className="text-white" />
+            <MessageCircle size={22} className="text-white" />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-[var(--color-text)]">월루</h1>
           <p className="mt-1.5 text-sm text-[var(--color-text-muted)]">서울·경기 반말방</p>

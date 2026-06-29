@@ -111,6 +111,7 @@ export interface WelcomeMessage {
 
 export const PERM_OWNER = 1
 export const PERM_ADMIN = 2
+export const PERM_BOT = 3
 
 // 유저가 자유롭게 입력하는 평문 프로필 필드 (각 최대 30자)
 export const PROFILE_TEXT_FIELDS = [

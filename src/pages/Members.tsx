@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState, type MouseEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Crown, SearchX } from 'lucide-react'
+import { Crown, Bot, SearchX } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { useAuth } from '../hooks/useAuth'
-import { MBTI_TYPES, PERM_OWNER, PERM_ADMIN } from '../types'
+import { MBTI_TYPES, PERM_OWNER, PERM_ADMIN, PERM_BOT, type UserLogs } from '../types'
 import { Page, PageHeader } from '../components/ui/Page'
 import { Input } from '../components/ui/Input'
 import { Avatar } from '../components/ui/Avatar'
 import { Loading, ErrorState, EmptyState } from '../components/ui/States'
+import { hasLeft } from '../lib/userStatus'
 import { cn } from '../lib/cn'
 
 interface MemberRow {
@@ -21,6 +22,7 @@ interface MemberRow {
   permission: number[]
   profile_image: string | null
   level: number
+  logs: UserLogs
 }
 
 export default function Members() {
@@ -37,7 +39,7 @@ export default function Members() {
   const load = () => {
     supabase
       .from('users')
-      .select('id, name, kakao_name, title, titles, mbti, permission, profile_image, level')
+      .select('id, name, kakao_name, title, titles, mbti, permission, profile_image, level, logs')
       .order('name')
       .then(({ data, error }) => {
         if (error) setError(error.message)
@@ -50,11 +52,20 @@ export default function Members() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return rows.filter((r) => {
+    const matched = rows.filter((r) => {
+      if (hasLeft(r.logs)) return false
       if (mbtiFilter !== 'ALL' && r.mbti !== mbtiFilter) return false
       if (!q) return true
       return [r.name, r.kakao_name ?? ''].join(' ').toLowerCase().includes(q)
     })
+    // 권한 우선순위: 소유자(1) → 관리자(2) → 일반 → 봇(3)
+    const rank = (perm: number[]) => {
+      if (perm.includes(PERM_OWNER)) return 0
+      if (perm.includes(PERM_ADMIN)) return 1
+      if (perm.includes(PERM_BOT)) return 3
+      return 2
+    }
+    return [...matched].sort((a, b) => rank(a.permission) - rank(b.permission))
   }, [rows, query, mbtiFilter])
 
   const go = (id: string) => navigate(isMobile ? `/m/members/${id}` : `/members/${id}`)
@@ -114,7 +125,8 @@ export default function Members() {
           {filtered.map((r) => {
             const isTargetOwner = r.permission.includes(PERM_OWNER)
             const isTargetAdmin = r.permission.includes(PERM_ADMIN)
-            const showToggle = isOwner && r.id !== me?.id && !isTargetOwner
+            const isTargetBot = r.permission.includes(PERM_BOT)
+            const showToggle = isOwner && r.id !== me?.id && !isTargetOwner && !isTargetBot
 
             return (
               <button
@@ -134,13 +146,18 @@ export default function Members() {
                     <Avatar name={r.name} size={44} />
                   )}
                   {isTargetOwner && (
-                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 ring-2 ring-[var(--color-surface)]">
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 ring-2 ring-[var(--color-surface)]">
                       <Crown size={8} className="text-white" />
                     </span>
                   )}
                   {!isTargetOwner && isTargetAdmin && (
-                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 ring-2 ring-[var(--color-surface)]">
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 ring-2 ring-[var(--color-surface)]">
                       <Crown size={8} className="text-white" />
+                    </span>
+                  )}
+                  {!isTargetOwner && !isTargetAdmin && isTargetBot && (
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-purple-500 ring-2 ring-[var(--color-surface)]">
+                      <Bot size={8} className="text-white" />
                     </span>
                   )}
                 </div>
@@ -173,7 +190,7 @@ export default function Members() {
                     className={cn(
                       'shrink-0 rounded-lg p-1.5 transition-colors disabled:opacity-50',
                       isTargetAdmin
-                        ? 'text-blue-400 hover:bg-blue-500/10'
+                        ? 'text-pink-400 hover:bg-pink-500/10'
                         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text)]',
                     )}
                   >

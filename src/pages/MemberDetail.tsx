@@ -34,6 +34,10 @@ export default function MemberDetail() {
 
   // 프로필 정보 수정 (관리자)
   const [editingProfile, setEditingProfile] = useState(false)
+  const [editName, setEditName] = useState('')
+  const [editBdYear, setEditBdYear] = useState('')
+  const [editBdMonth, setEditBdMonth] = useState('')
+  const [editBdDay, setEditBdDay] = useState('')
   const [editMbti, setEditMbti] = useState('')
   const [editFields, setEditFields] = useState<Record<ProfileTextFieldKey, string>>(
     () => Object.fromEntries(PROFILE_TEXT_FIELDS.map((f) => [f.key, ''])) as Record<ProfileTextFieldKey, string>,
@@ -169,6 +173,20 @@ export default function MemberDetail() {
   }
 
   const startEditProfile = () => {
+    setEditName(user.name ?? '')
+    const bd = user.birthday ?? ''
+    if (bd.length === 10 && bd[4] === '.') {
+      const parts = bd.split('.')
+      setEditBdYear(parts[0])
+      setEditBdMonth(String(parseInt(parts[1])))
+      setEditBdDay(String(parseInt(parts[2])))
+    } else if (bd.length === 6) {
+      setEditBdYear('')
+      setEditBdMonth(String(parseInt(bd.slice(2, 4))))
+      setEditBdDay(String(parseInt(bd.slice(4, 6))))
+    } else {
+      setEditBdYear(''); setEditBdMonth(''); setEditBdDay('')
+    }
     setEditMbti(user.mbti ?? '')
     setEditFields(
       Object.fromEntries(
@@ -180,14 +198,31 @@ export default function MemberDetail() {
   }
 
   const saveProfile = async () => {
+    const name = editName.trim()
+    if (!name) { setProfileError('핸들을 입력해 주세요'); return }
     setProfileSaving(true)
     setProfileError(null)
+
+    if (name !== user.name) {
+      const { data: dup, error: dupErr } = await supabase
+        .from('users')
+        .select('id')
+        .eq('name', name)
+        .neq('id', user.id)
+        .maybeSingle()
+      if (dupErr) { setProfileSaving(false); setProfileError(dupErr.message); return }
+      if (dup) { setProfileSaving(false); setProfileError('이미 사용 중인 핸들입니다'); return }
+    }
+
+    const birthday = editBdYear && editBdMonth && editBdDay
+      ? `${editBdYear.padStart(4, '0')}.${editBdMonth.padStart(2, '0')}.${editBdDay.padStart(2, '0')}`
+      : ''
     const textUpdates = Object.fromEntries(
       PROFILE_TEXT_FIELDS.map((f) => [f.key, editFields[f.key].trim() || null]),
     )
     const { error } = await supabase
       .from('users')
-      .update({ mbti: editMbti || null, ...textUpdates, updated_at: new Date().toISOString() })
+      .update({ name, birthday, mbti: editMbti || null, ...textUpdates, updated_at: new Date().toISOString() })
       .eq('id', user.id)
     setProfileSaving(false)
     if (error) { setProfileError(error.message); return }
@@ -253,6 +288,44 @@ export default function MemberDetail() {
           {editingProfile ? (
             <>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <div className="mb-1.5 text-xs text-[var(--color-text-muted)]">핸들</div>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-[var(--color-text-muted)]">@</span>
+                    <Input
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value.replace(/[^ㄱ-ㅣㆍ가-힣a-zA-Z0-9_.]/g, ''))}
+                      placeholder="핸들"
+                      className="pl-7"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-1.5 text-xs text-[var(--color-text-muted)]">생일</div>
+                  <div className="flex gap-2">
+                    <Input
+                      value={editBdYear}
+                      onChange={(e) => setEditBdYear(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      placeholder="연도"
+                      inputMode="numeric"
+                      className="flex-[5]"
+                    />
+                    <Input
+                      value={editBdMonth}
+                      onChange={(e) => setEditBdMonth(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                      placeholder="월"
+                      inputMode="numeric"
+                      className="flex-[3]"
+                    />
+                    <Input
+                      value={editBdDay}
+                      onChange={(e) => setEditBdDay(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                      placeholder="일"
+                      inputMode="numeric"
+                      className="flex-[3]"
+                    />
+                  </div>
+                </div>
                 <div>
                   <div className="mb-1.5 text-xs text-[var(--color-text-muted)]">MBTI</div>
                   <select

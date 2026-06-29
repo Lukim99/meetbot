@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { Crown, Inbox } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useIsMobile } from '../hooks/useIsMobile'
-import { PERM_OWNER, PERM_ADMIN } from '../types'
+import { PERM_OWNER, PERM_ADMIN, PERM_BOT, type UserLogs } from '../types'
 import { Page, PageHeader } from '../components/ui/Page'
 import { Avatar } from '../components/ui/Avatar'
 import { RankBadge } from '../components/ui/RankBadge'
 import { Loading, ErrorState, EmptyState } from '../components/ui/States'
+import { hasLeft } from '../lib/userStatus'
 import { cn } from '../lib/cn'
 
 interface RankRow {
@@ -19,6 +20,7 @@ interface RankRow {
   permission: number[]
   profile_image: string | null
   level: number
+  logs: UserLogs
 }
 
 export default function Ranking() {
@@ -31,11 +33,11 @@ export default function Ranking() {
   useEffect(() => {
     supabase
       .from('users')
-      .select('id, name, kakao_name, title, chat_count, permission, profile_image, level')
+      .select('id, name, kakao_name, title, chat_count, permission, profile_image, level, logs')
       .order('chat_count', { ascending: false })
       .then(({ data, error }) => {
         if (error) setError(error.message)
-        else setRows((data ?? []) as RankRow[])
+        else setRows(((data ?? []) as RankRow[]).filter((r) => !r.permission?.includes(PERM_BOT) && !hasLeft(r.logs)))
         setLoading(false)
       })
   }, [])
@@ -129,12 +131,12 @@ function ProfileAvatar({ row }: { row: RankRow }) {
         <Avatar name={row.name} size={40} />
       )}
       {isOwner && (
-        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 ring-2 ring-[var(--color-surface)]">
+        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 ring-2 ring-[var(--color-surface)]">
           <Crown size={8} className="text-white" />
         </span>
       )}
       {!isOwner && isAdmin && (
-        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 ring-2 ring-[var(--color-surface)]">
+        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 ring-2 ring-[var(--color-surface)]">
           <Crown size={8} className="text-white" />
         </span>
       )}

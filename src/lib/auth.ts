@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import { useAuthStore } from '../store/authStore'
+import { hasLeft } from './userStatus'
 import type { User } from '../types'
 
 const UID_KEY = 'uid'
@@ -32,6 +33,7 @@ async function fetchUserByName(name: string): Promise<User | null> {
 export async function login(name: string, code?: string): Promise<User> {
   const user = await fetchUserByName(name.trim())
   if (!user) throw new AuthError('유저를 찾을 수 없습니다')
+  if (hasLeft(user.logs)) throw new AuthError('퇴장한 유저는 로그인할 수 없습니다')
 
   const ua = navigator.userAgent
   const known = user.logged_in_agent?.includes(ua)
@@ -71,7 +73,7 @@ export async function restoreSession(): Promise<void> {
     .select('*')
     .eq('id', uid)
     .maybeSingle()
-  if (error || !data) {
+  if (error || !data || hasLeft((data as User).logs)) {
     sessionStorage.removeItem(UID_KEY)
     store.clear()
   } else {
