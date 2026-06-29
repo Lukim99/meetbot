@@ -14,7 +14,7 @@ export default function Login() {
   const [name, setName] = useState('')
 
   const handleNameChange = (value: string) => {
-    const filtered = value.replace(/[^ㄱ-ㅎ가-힣a-zA-Z0-9_.]/g, '')
+    const filtered = value.replace(/[^ㄱ-ㅣㆍ가-힣a-zA-Z0-9_.]/g, '')
     setName(filtered)
   }
   const [code, setCode] = useState('')
