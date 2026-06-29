@@ -61,7 +61,7 @@ function toTimeStr(iso: string | null | undefined): string {
 }
 
 const fieldCls =
-  'rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none transition-colors'
+  'rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none transition-colors'
 
 export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit, submitting }: Props) {
   const isEdit = !!meeting
@@ -119,7 +119,7 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
       onClick={onClose}
     >
       <div
-        className="mx-auto w-full max-w-md overflow-hidden rounded-t-2xl bg-[--color-surface] shadow-2xl sm:rounded-2xl"
+        className="mx-auto w-full max-w-md overflow-hidden rounded-t-2xl bg-[var(--color-surface)] shadow-2xl sm:rounded-2xl"
         style={{ border: '1px solid var(--color-border)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -127,16 +127,16 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
 
         <div className="flex items-center justify-between px-6 pb-4 pt-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[--color-accent]/15">
-              <CalendarDays size={15} className="text-[--color-accent]" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent)]/15">
+              <CalendarDays size={15} className="text-[var(--color-accent)]" />
             </div>
-            <h2 className="text-base font-semibold text-[--color-text]">{isEdit ? '일정 수정' : '새 일정'}</h2>
+            <h2 className="text-base font-semibold text-[var(--color-text)]">{isEdit ? '일정 수정' : '새 일정'}</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[--color-text-muted] transition-colors hover:bg-[--color-surface-2]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-2)]"
           >
             <X size={16} />
           </button>
@@ -144,14 +144,14 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
 
         <form onSubmit={handleSubmit} className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto px-6 pb-6">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--color-text-muted)]">
               일정 이름 <span className="text-red-400">*</span>
             </label>
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="어떤 일정인가요?" autoFocus required />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--color-text-muted)]">
               시작 <span className="text-red-400">*</span>
             </label>
             <div className="flex gap-2">
@@ -175,13 +175,13 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
 
           <div>
             <div className="mb-1.5 flex items-center justify-between">
-              <label className="text-xs font-medium text-[--color-text-muted]">종료</label>
+              <label className="text-xs font-medium text-[var(--color-text-muted)]">종료</label>
               <button
                 type="button"
                 onClick={() => setHasEnd((h) => !h)}
                 className={cn(
                   'text-xs transition-colors',
-                  hasEnd ? 'text-[--color-accent]' : 'text-[--color-text-muted] hover:text-[--color-text]',
+                  hasEnd ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]',
                 )}
               >
                 {hasEnd ? '설정됨 ×' : '+ 종료 시간 설정'}
@@ -208,21 +208,21 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">
-              설명 <span className="font-normal text-[--color-text-muted]">선택</span>
+            <label className="mb-1.5 block text-xs font-medium text-[var(--color-text-muted)]">
+              설명 <span className="font-normal text-[var(--color-text-muted)]">선택</span>
             </label>
             <textarea
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
               rows={2}
               placeholder="장소나 메모를 남겨보세요"
-              className="w-full resize-none rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] placeholder:text-[--color-text-muted] transition-colors focus:border-[--color-accent] focus:outline-none"
+              className="w-full resize-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] transition-colors focus:border-[var(--color-accent)] focus:outline-none"
             />
           </div>
 
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">최소 인원</label>
+              <label className="mb-1.5 block text-xs font-medium text-[var(--color-text-muted)]">최소 인원</label>
               <Input
                 type="number"
                 min="1"
@@ -232,7 +232,7 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
               />
             </div>
             <div className="flex-1">
-              <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">최대 인원</label>
+              <label className="mb-1.5 block text-xs font-medium text-[var(--color-text-muted)]">최대 인원</label>
               <Input
                 type="number"
                 min="1"
@@ -244,7 +244,7 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">참가 마감</label>
+            <label className="mb-1.5 block text-xs font-medium text-[var(--color-text-muted)]">참가 마감</label>
             <select
               value={deadlineOffset}
               onChange={(e) => setDeadlineOffset(e.target.value)}
@@ -268,13 +268,13 @@ export function MeetingFormModal({ open, initialDate, meeting, onClose, onSubmit
                 className={cn(
                   'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors',
                   joinSelf
-                    ? 'border-[--color-accent] bg-[--color-accent]/20'
-                    : 'border-[--color-border-strong] bg-[--color-surface-2]',
+                    ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/20'
+                    : 'border-[var(--color-border-strong)] bg-[var(--color-surface-2)]',
                 )}
               >
-                {joinSelf && <Check size={10} className="text-[--color-accent]" />}
+                {joinSelf && <Check size={10} className="text-[var(--color-accent)]" />}
               </div>
-              <span className="text-sm text-[--color-text]">모임장 되기</span>
+              <span className="text-sm text-[var(--color-text)]">모임장 되기</span>
             </button>
           )}
 

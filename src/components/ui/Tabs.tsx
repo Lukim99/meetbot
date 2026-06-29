@@ -17,8 +17,8 @@ export function Tabs({ tabs, active, onChange }: TabsProps) {
           className={cn(
             'shrink-0 px-4 py-2 text-sm transition-colors cursor-pointer border-b-2 -mb-px',
             i === active
-              ? 'border-[--color-accent] text-[--color-accent] font-medium'
-              : 'border-transparent text-[--color-text-muted] hover:text-[--color-text]',
+              ? 'border-[var(--color-accent)] text-[var(--color-accent)] font-medium'
+              : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]',
           )}
         >
           {tab}

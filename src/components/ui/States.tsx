@@ -7,8 +7,8 @@ export function Loading({ label = '불러오는 중...', fullScreen = false }: {
     <div
       className={
         fullScreen
-          ? 'flex h-full items-center justify-center gap-2 text-sm text-[--color-text-muted]'
-          : 'flex items-center justify-center gap-2 py-16 text-sm text-[--color-text-muted]'
+          ? 'flex h-full items-center justify-center gap-2 text-sm text-[var(--color-text-muted)]'
+          : 'flex items-center justify-center gap-2 py-16 text-sm text-[var(--color-text-muted)]'
       }
     >
       <Loader2 size={18} className="animate-spin" />
@@ -36,10 +36,10 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[--color-surface-2]">
-        <Icon size={22} className="text-[--color-text-muted]" />
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-surface-2)]">
+        <Icon size={22} className="text-[var(--color-text-muted)]" />
       </div>
-      <p className="text-sm text-[--color-text-muted]">{message}</p>
+      <p className="text-sm text-[var(--color-text-muted)]">{message}</p>
       {children}
     </div>
   )

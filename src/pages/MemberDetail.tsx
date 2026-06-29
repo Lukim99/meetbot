@@ -199,7 +199,7 @@ export default function MemberDetail() {
     <Page>
       <button
         onClick={() => navigate(isMobile ? '/m/members' : '/members')}
-        className="mb-4 flex items-center gap-1.5 text-sm text-[--color-text-muted] hover:text-[--color-text] transition-colors"
+        className="mb-4 flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
       >
         <ArrowLeft size={16} />
         멤버 목록
@@ -214,7 +214,7 @@ export default function MemberDetail() {
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="truncate text-xl font-semibold text-[--color-text]">
+            <h1 className="truncate text-xl font-semibold text-[var(--color-text)]">
               {user.kakao_name || user.name}
             </h1>
             {user.title && <Badge tone="accent">{user.title}</Badge>}
@@ -226,8 +226,8 @@ export default function MemberDetail() {
               </span>
             )}
           </div>
-          <div className="mt-0.5 text-xs text-[--color-text-muted]">@{user.name}</div>
-          <div className="mt-1 text-sm text-[--color-text-muted]">
+          <div className="mt-0.5 text-xs text-[var(--color-text-muted)]">@{user.name}</div>
+          <div className="mt-1 text-sm text-[var(--color-text-muted)]">
             생일 {formatBirthday(user.birthday)} · 채팅 {user.chat_count.toLocaleString('ko-KR')}
           </div>
         </div>
@@ -237,12 +237,12 @@ export default function MemberDetail() {
       {(isAdmin || PROFILE_TEXT_FIELDS.some((f) => user[f.key]) || user.mbti) && (
         <Card className="mb-5">
           <div className="mb-3 flex items-center justify-between gap-2">
-            <div className="text-sm font-medium text-[--color-text]">프로필 정보</div>
+            <div className="text-sm font-medium text-[var(--color-text)]">프로필 정보</div>
             {isAdmin && !editingProfile && (
               <button
                 type="button"
                 onClick={startEditProfile}
-                className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-[--color-text-muted] transition-colors hover:bg-[--color-surface-2] hover:text-[--color-text]"
+                className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text)]"
               >
                 <Pencil size={12} />
                 수정
@@ -254,11 +254,11 @@ export default function MemberDetail() {
             <>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
-                  <div className="mb-1.5 text-xs text-[--color-text-muted]">MBTI</div>
+                  <div className="mb-1.5 text-xs text-[var(--color-text-muted)]">MBTI</div>
                   <select
                     value={editMbti}
                     onChange={(e) => setEditMbti(e.target.value)}
-                    className="w-full rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2.5 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none focus:ring-2 focus:ring-[--color-accent]/[.12]"
+                    className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/[.12]"
                   >
                     <option value="">없음</option>
                     {MBTI_TYPES.map((t) => (
@@ -268,7 +268,7 @@ export default function MemberDetail() {
                 </div>
                 {PROFILE_TEXT_FIELDS.map((f) => (
                   <div key={f.key}>
-                    <div className="mb-1.5 text-xs text-[--color-text-muted]">{f.label}</div>
+                    <div className="mb-1.5 text-xs text-[var(--color-text-muted)]">{f.label}</div>
                     <Input
                       value={editFields[f.key]}
                       onChange={(e) =>
@@ -295,8 +295,8 @@ export default function MemberDetail() {
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {user.mbti && (
                 <div className="flex items-center justify-between gap-3 text-sm">
-                  <span className="shrink-0 text-[--color-text-muted]">MBTI</span>
-                  <span className="truncate text-[--color-text]">{user.mbti}</span>
+                  <span className="shrink-0 text-[var(--color-text-muted)]">MBTI</span>
+                  <span className="truncate text-[var(--color-text)]">{user.mbti}</span>
                 </div>
               )}
               {PROFILE_TEXT_FIELDS.map((f) => {
@@ -304,8 +304,8 @@ export default function MemberDetail() {
                 if (!value && !isAdmin) return null
                 return (
                   <div key={f.key} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="shrink-0 text-[--color-text-muted]">{f.label}</span>
-                    <span className={cn('truncate', value ? 'text-[--color-text]' : 'text-[--color-text-muted]')}>
+                    <span className="shrink-0 text-[var(--color-text-muted)]">{f.label}</span>
+                    <span className={cn('truncate', value ? 'text-[var(--color-text)]' : 'text-[var(--color-text-muted)]')}>
                       {value || '미설정'}
                     </span>
                   </div>
@@ -319,13 +319,13 @@ export default function MemberDetail() {
       {/* 관리자 칭호 배정 */}
       {isAdmin && (
         <Card className="mb-5">
-          <div className="mb-3 text-sm font-medium text-[--color-text]">칭호 관리</div>
+          <div className="mb-3 text-sm font-medium text-[var(--color-text)]">칭호 관리</div>
 
           {/* 보유 칭호 */}
-          <div className="mb-1.5 text-xs text-[--color-text-muted]">보유 칭호</div>
+          <div className="mb-1.5 text-xs text-[var(--color-text-muted)]">보유 칭호</div>
           <div className="mb-4 flex flex-wrap gap-2">
             {user.titles.length === 0 && (
-              <span className="text-xs text-[--color-text-muted]">배정된 칭호 없음</span>
+              <span className="text-xs text-[var(--color-text-muted)]">배정된 칭호 없음</span>
             )}
             {user.titles.map((t) => {
               const isActive = t === user.title
@@ -335,8 +335,8 @@ export default function MemberDetail() {
                   className={cn(
                     'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
                     isActive
-                      ? 'border-[--color-accent]/30 bg-[--color-accent]/15 text-[--color-accent]'
-                      : 'border-[--color-border] bg-[--color-surface-2] text-[--color-text]',
+                      ? 'border-[var(--color-accent)]/30 bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
+                      : 'border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-text)]',
                   )}
                 >
                   <button
@@ -349,7 +349,7 @@ export default function MemberDetail() {
                   >
                     <Crown
                       size={10}
-                      className={isActive ? 'text-[--color-accent]' : 'text-[--color-text-muted] opacity-30'}
+                      className={isActive ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)] opacity-30'}
                     />
                     {t}
                   </button>
@@ -358,7 +358,7 @@ export default function MemberDetail() {
                     onClick={() => removeTitle(t)}
                     disabled={titleSaving}
                     aria-label={`${t} 제거`}
-                    className="ml-0.5 rounded-full p-0.5 text-[--color-text-muted] transition-colors hover:bg-red-500/20 hover:text-red-400 disabled:opacity-40"
+                    className="ml-0.5 rounded-full p-0.5 text-[var(--color-text-muted)] transition-colors hover:bg-red-500/20 hover:text-red-400 disabled:opacity-40"
                   >
                     <X size={10} />
                   </button>
@@ -370,7 +370,7 @@ export default function MemberDetail() {
           {/* 추가 가능한 칭호 */}
           {availableToAdd.length > 0 && (
             <>
-              <div className="mb-2 text-xs text-[--color-text-muted]">추가 가능한 칭호</div>
+              <div className="mb-2 text-xs text-[var(--color-text-muted)]">추가 가능한 칭호</div>
               <div className="flex flex-wrap gap-2">
                 {availableToAdd.map((t) => (
                   <button
@@ -378,7 +378,7 @@ export default function MemberDetail() {
                     type="button"
                     onClick={() => addTitle(t.name)}
                     disabled={titleSaving}
-                    className="inline-flex items-center gap-1 rounded-full border border-dashed border-[--color-border] px-2.5 py-1 text-xs text-[--color-text-muted] transition-colors hover:border-[--color-accent]/50 hover:text-[--color-accent] disabled:opacity-40"
+                    className="inline-flex items-center gap-1 rounded-full border border-dashed border-[var(--color-border)] px-2.5 py-1 text-xs text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-accent)]/50 hover:text-[var(--color-accent)] disabled:opacity-40"
                   >
                     <Plus size={10} />
                     {t.name}
@@ -393,11 +393,11 @@ export default function MemberDetail() {
       {/* 경고 관리 (permission 1 또는 2) */}
       {isAdmin && (
         <Card className="mb-5">
-          <div className="mb-3 flex items-center gap-1.5 text-sm font-medium text-[--color-text]">
+          <div className="mb-3 flex items-center gap-1.5 text-sm font-medium text-[var(--color-text)]">
             <AlertTriangle size={15} className="text-red-400" />
             경고 관리
             {warnings.length > 0 && (
-              <span className="text-[--color-text-muted]">· 누적 {warnings.length}회</span>
+              <span className="text-[var(--color-text-muted)]">· 누적 {warnings.length}회</span>
             )}
           </div>
 
@@ -422,17 +422,17 @@ export default function MemberDetail() {
 
           {/* 경고 내역 */}
           {warnings.length === 0 ? (
-            <p className="text-xs text-[--color-text-muted]">경고 내역이 없습니다</p>
+            <p className="text-xs text-[var(--color-text-muted)]">경고 내역이 없습니다</p>
           ) : (
             <div className="flex flex-col gap-2">
               {warnings.map((w) => (
                 <div
                   key={w.id}
-                  className="flex items-start gap-3 rounded-lg border-l-2 border-l-red-500 bg-[--color-surface] px-4 py-3"
+                  className="flex items-start gap-3 rounded-lg border-l-2 border-l-red-500 bg-[var(--color-surface)] px-4 py-3"
                 >
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm text-[--color-text]">{w.reason}</div>
-                    <div className="mt-0.5 text-xs text-[--color-text-muted]">
+                    <div className="text-sm text-[var(--color-text)]">{w.reason}</div>
+                    <div className="mt-0.5 text-xs text-[var(--color-text-muted)]">
                       {w.warned_by ? `${warnerNames[w.warned_by] ?? w.warned_by} · ` : ''}
                       {formatDateTime(w.created_at)}
                     </div>
@@ -442,7 +442,7 @@ export default function MemberDetail() {
                     onClick={() => removeWarning(w.id)}
                     disabled={warnSaving}
                     aria-label="경고 삭제"
-                    className="shrink-0 rounded-md p-1 text-[--color-text-muted] transition-colors hover:bg-red-500/20 hover:text-red-400 disabled:opacity-40"
+                    className="shrink-0 rounded-md p-1 text-[var(--color-text-muted)] transition-colors hover:bg-red-500/20 hover:text-red-400 disabled:opacity-40"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -459,13 +459,13 @@ export default function MemberDetail() {
         {tab === 0 && (
           <div className="flex flex-col gap-2">
             {events.length === 0 && (
-              <p className="py-8 text-center text-sm text-[--color-text-muted]">기록이 없습니다</p>
+              <p className="py-8 text-center text-sm text-[var(--color-text-muted)]">기록이 없습니다</p>
             )}
             {events.map((ev, i) => (
               <div
                 key={i}
                 className={cn(
-                  'flex items-center gap-3 rounded-lg border-l-2 bg-[--color-surface] px-4 py-3',
+                  'flex items-center gap-3 rounded-lg border-l-2 bg-[var(--color-surface)] px-4 py-3',
                   ev.kind === 'entry' ? 'border-l-green-500' : 'border-l-red-500',
                 )}
               >
@@ -477,16 +477,16 @@ export default function MemberDetail() {
                   <LogOut size={16} className="shrink-0 text-red-500" />
                 )}
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm text-[--color-text]">
+                  <div className="text-sm text-[var(--color-text)]">
                     {ev.kind === 'entry'
                       ? '입장'
                       : ev.cause === '강퇴'
                         ? `강퇴${ev.kicked_by ? ` (by ${kickerNames[ev.kicked_by] ?? ev.kicked_by})` : ''}`
                         : '나가기'}
                   </div>
-                  <div className="truncate text-xs text-[--color-text-muted]">{ev.name}</div>
+                  <div className="truncate text-xs text-[var(--color-text-muted)]">{ev.name}</div>
                 </div>
-                <div className="shrink-0 text-xs text-[--color-text-muted]">{formatDateTime(ev.date)}</div>
+                <div className="shrink-0 text-xs text-[var(--color-text-muted)]">{formatDateTime(ev.date)}</div>
               </div>
             ))}
           </div>
@@ -495,19 +495,19 @@ export default function MemberDetail() {
         {tab === 1 && (
           <div className="flex flex-col gap-2">
             {changes.length === 0 && (
-              <p className="py-8 text-center text-sm text-[--color-text-muted]">닉네임 변경 기록이 없습니다</p>
+              <p className="py-8 text-center text-sm text-[var(--color-text-muted)]">닉네임 변경 기록이 없습니다</p>
             )}
             {changes.map((c, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between gap-3 rounded-lg bg-[--color-surface] px-4 py-3"
+                className="flex items-center justify-between gap-3 rounded-lg bg-[var(--color-surface)] px-4 py-3"
               >
                 <div className="min-w-0 text-sm">
-                  <span className="text-[--color-text-muted] line-through">{c.old_name}</span>
-                  <span className="mx-2 text-[--color-text-muted]">→</span>
-                  <span className="text-[--color-text]">{c.new_name}</span>
+                  <span className="text-[var(--color-text-muted)] line-through">{c.old_name}</span>
+                  <span className="mx-2 text-[var(--color-text-muted)]">→</span>
+                  <span className="text-[var(--color-text)]">{c.new_name}</span>
                 </div>
-                <div className="shrink-0 text-xs text-[--color-text-muted]">{formatDateTime(c.date)}</div>
+                <div className="shrink-0 text-xs text-[var(--color-text-muted)]">{formatDateTime(c.date)}</div>
               </div>
             ))}
           </div>
@@ -529,8 +529,8 @@ export default function MemberDetail() {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <Card>
-      <div className="text-xs text-[--color-text-muted]">{label}</div>
-      <div className="mt-1 text-2xl font-semibold text-[--color-text]">{value.toLocaleString('ko-KR')}</div>
+      <div className="text-xs text-[var(--color-text-muted)]">{label}</div>
+      <div className="mt-1 text-2xl font-semibold text-[var(--color-text)]">{value.toLocaleString('ko-KR')}</div>
     </Card>
   )
 }

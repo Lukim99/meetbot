@@ -105,10 +105,10 @@ export default function Commands() {
       ) : rows.length === 0 ? (
         <EmptyState icon={Terminal} message="등록된 명령어가 없습니다" />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-[--color-border]">
+        <div className="overflow-hidden rounded-xl border border-[var(--color-border)]">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[--color-border] text-xs uppercase text-[--color-text-muted]">
+              <tr className="border-b border-[var(--color-border)] text-xs uppercase text-[var(--color-text-muted)]">
                 <th className="px-4 py-3 text-left">트리거</th>
                 <th className="px-4 py-3 text-left">응답</th>
                 <th className="w-20 px-4 py-3 text-center">이미지</th>
@@ -117,14 +117,14 @@ export default function Commands() {
             </thead>
             <tbody>
               {rows.map((c) => (
-                <tr key={c.id} className="border-b border-[--color-border]">
-                  <td className="px-4 py-3 font-medium text-[--color-text]">{c.trigger}</td>
+                <tr key={c.id} className="border-b border-[var(--color-border)]">
+                  <td className="px-4 py-3 font-medium text-[var(--color-text)]">{c.trigger}</td>
                   <td className="max-w-xs px-4 py-3">
-                    <div className="truncate text-[--color-text-muted]">
+                    <div className="truncate text-[var(--color-text-muted)]">
                       {c.response_text || '-'}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-center text-[--color-text-muted]">
+                  <td className="px-4 py-3 text-center text-[var(--color-text-muted)]">
                     {c.image_url ? 'O' : '-'}
                   </td>
                   <td className="px-4 py-3">
@@ -132,14 +132,14 @@ export default function Commands() {
                       <button
                         onClick={() => openEdit(c)}
                         aria-label="수정"
-                        className="text-[--color-text-muted] hover:text-[--color-text]"
+                        className="text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
                       >
                         <Pencil size={15} />
                       </button>
                       <button
                         onClick={() => remove(c)}
                         aria-label="삭제"
-                        className="text-[--color-text-muted] hover:text-red-400"
+                        className="text-[var(--color-text-muted)] hover:text-red-400"
                       >
                         <Trash2 size={15} />
                       </button>
@@ -169,7 +169,7 @@ export default function Commands() {
       >
         <div className="flex flex-col gap-4">
           <div>
-            <label className="mb-1.5 block text-xs text-[--color-text-muted]">트리거</label>
+            <label className="mb-1.5 block text-xs text-[var(--color-text-muted)]">트리거</label>
             <Input
               value={form.trigger}
               onChange={(e) => setForm({ ...form, trigger: e.target.value })}
@@ -177,17 +177,17 @@ export default function Commands() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-[--color-text-muted]">응답 텍스트</label>
+            <label className="mb-1.5 block text-xs text-[var(--color-text-muted)]">응답 텍스트</label>
             <textarea
               value={form.response_text}
               onChange={(e) => setForm({ ...form, response_text: e.target.value })}
               rows={3}
-              className="w-full resize-none rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2 text-sm text-[--color-text] placeholder:text-[--color-text-muted] focus:border-[--color-accent] focus:outline-none"
+              className="w-full resize-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
               placeholder="자동 응답 내용"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-[--color-text-muted]">이미지 (선택)</label>
+            <label className="mb-1.5 block text-xs text-[var(--color-text-muted)]">이미지 (선택)</label>
             <input
               ref={fileRef}
               type="file"
@@ -200,7 +200,7 @@ export default function Commands() {
                 <img
                   src={form.image_url}
                   alt="응답 이미지"
-                  className="max-w-full h-auto max-h-40 rounded-lg border border-[--color-border]"
+                  className="max-w-full h-auto max-h-40 rounded-lg border border-[var(--color-border)]"
                 />
                 <button
                   type="button"

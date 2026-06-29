@@ -15,7 +15,7 @@ const variants: Record<Variant, string> = {
   primary:
     'bg-gradient-to-br from-[#818cf8] to-[#6366f1] text-white font-semibold shadow-[0_2px_16px_rgba(129,140,248,0.22)] hover:shadow-[0_3px_24px_rgba(129,140,248,0.38)] hover:brightness-[1.07]',
   ghost:
-    'border border-[--color-border] bg-white/[.04] text-[--color-text] hover:bg-white/[.08] hover:border-[--color-border-strong]',
+    'border border-[var(--color-border)] bg-white/[.04] text-[var(--color-text)] hover:bg-white/[.08] hover:border-[var(--color-border-strong)]',
   danger:
     'border border-red-500/25 bg-red-500/[.08] text-red-400 hover:bg-red-500/[.14] hover:border-red-400/40',
 }

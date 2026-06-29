@@ -16,7 +16,7 @@ export function RankBadge({ rank }: { rank: number }) {
       {color ? (
         <Medal size={20} style={{ color }} />
       ) : (
-        <span className="text-sm text-[--color-text-muted]">{rank}</span>
+        <span className="text-sm text-[var(--color-text-muted)]">{rank}</span>
       )}
     </span>
   )

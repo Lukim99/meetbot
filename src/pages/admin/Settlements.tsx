@@ -103,13 +103,13 @@ export default function Settlements() {
                 <button
                   key={r.id}
                   onClick={() => go(r.id)}
-                  className="flex flex-col gap-3 rounded-xl border border-[--color-border] bg-[--color-surface] p-4 text-left transition-colors hover:bg-[--color-surface-2]"
+                  className="flex flex-col gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-left transition-colors hover:bg-[var(--color-surface-2)]"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <span className="min-w-0 flex-1 truncate font-semibold text-[--color-text]">{r.name}</span>
+                    <span className="min-w-0 flex-1 truncate font-semibold text-[var(--color-text)]">{r.name}</span>
                     <StatusToggle row={r} onToggle={toggle} />
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-[--color-text-muted]">
+                  <div className="flex items-center gap-3 text-xs text-[var(--color-text-muted)]">
                     <span className="inline-flex items-center gap-1">
                       <CalendarDays size={13} />
                       {formatDate(r.date)}
@@ -123,18 +123,18 @@ export default function Settlements() {
                     className="flex items-baseline justify-between pt-3"
                     style={{ borderTop: '1px solid var(--color-border)' }}
                   >
-                    <span className="text-xs text-[--color-text-muted]">총액</span>
-                    <span className="text-base font-bold text-[--color-text]">{formatWon(r.total)}</span>
+                    <span className="text-xs text-[var(--color-text-muted)]">총액</span>
+                    <span className="text-base font-bold text-[var(--color-text)]">{formatWon(r.total)}</span>
                   </div>
                 </button>
               ))}
             </div>
           ) : (
             /* PC: 테이블 */
-            <div className="overflow-hidden rounded-xl border border-[--color-border]">
+            <div className="overflow-hidden rounded-xl border border-[var(--color-border)]">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[--color-border] text-xs uppercase text-[--color-text-muted]">
+                  <tr className="border-b border-[var(--color-border)] text-xs uppercase text-[var(--color-text-muted)]">
                     <th className="px-4 py-3 text-left">모임 이름</th>
                     <th className="w-36 px-4 py-3 text-left">날짜</th>
                     <th className="w-20 px-4 py-3 text-right">인원</th>
@@ -148,17 +148,17 @@ export default function Settlements() {
                     <tr
                       key={r.id}
                       onClick={() => go(r.id)}
-                      className="group cursor-pointer border-b border-[--color-border] transition-colors last:border-b-0 hover:bg-[--color-surface-2]"
+                      className="group cursor-pointer border-b border-[var(--color-border)] transition-colors last:border-b-0 hover:bg-[var(--color-surface-2)]"
                     >
-                      <td className="px-4 py-3 font-medium text-[--color-text]">{r.name}</td>
-                      <td className="px-4 py-3 text-[--color-text-muted]">{formatDate(r.date)}</td>
-                      <td className="px-4 py-3 text-right text-[--color-text-muted]">{r.count}</td>
-                      <td className="px-4 py-3 text-right font-medium text-[--color-text]">{formatWon(r.total)}</td>
+                      <td className="px-4 py-3 font-medium text-[var(--color-text)]">{r.name}</td>
+                      <td className="px-4 py-3 text-[var(--color-text-muted)]">{formatDate(r.date)}</td>
+                      <td className="px-4 py-3 text-right text-[var(--color-text-muted)]">{r.count}</td>
+                      <td className="px-4 py-3 text-right font-medium text-[var(--color-text)]">{formatWon(r.total)}</td>
                       <td className="px-4 py-3 text-center">
                         <StatusToggle row={r} onToggle={toggle} />
                       </td>
                       <td className="px-2 py-3 text-right">
-                        <ChevronRight size={16} className="text-[--color-text-muted] opacity-0 transition-opacity group-hover:opacity-100" />
+                        <ChevronRight size={16} className="text-[var(--color-text-muted)] opacity-0 transition-opacity group-hover:opacity-100" />
                       </td>
                     </tr>
                   ))}
@@ -186,9 +186,9 @@ function StatusToggle({ row, onToggle }: { row: Row; onToggle: (row: Row, e: Rea
 
 function SummaryCard({ label, value, tone }: { label: string; value: string; tone?: 'warning' }) {
   return (
-    <div className="rounded-xl border border-[--color-border] bg-[--color-surface] p-3 sm:p-4">
-      <div className="text-xs text-[--color-text-muted]">{label}</div>
-      <div className={cn('mt-1 truncate text-base font-bold sm:text-lg', tone === 'warning' ? 'text-orange-400' : 'text-[--color-text]')}>
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-4">
+      <div className="text-xs text-[var(--color-text-muted)]">{label}</div>
+      <div className={cn('mt-1 truncate text-base font-bold sm:text-lg', tone === 'warning' ? 'text-orange-400' : 'text-[var(--color-text)]')}>
         {value}
       </div>
     </div>

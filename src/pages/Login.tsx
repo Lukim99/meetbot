@@ -54,21 +54,21 @@ export default function Login() {
           >
             <Bot size={22} className="text-white" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-[--color-text]">월루</h1>
-          <p className="mt-1.5 text-sm text-[--color-text-muted]">서울·경기 반말방</p>
+          <h1 className="text-xl font-bold tracking-tight text-[var(--color-text)]">월루</h1>
+          <p className="mt-1.5 text-sm text-[var(--color-text-muted)]">서울·경기 반말방</p>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="flex flex-col gap-4 rounded-2xl bg-[--color-surface] p-6 shadow-[0_4px_32px_rgba(0,0,0,0.5)]"
+          className="flex flex-col gap-4 rounded-2xl bg-[var(--color-surface)] p-6 shadow-[0_4px_32px_rgba(0,0,0,0.5)]"
           style={{ border: '1px solid var(--color-border)' }}
         >
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--color-text-muted)]">
               로그인
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-[--color-text-muted]">
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-[var(--color-text-muted)]">
                 @
               </span>
               <Input
@@ -84,7 +84,7 @@ export default function Login() {
 
           {step === 'code' && (
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-[--color-text-muted]">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--color-text-muted)]">
                 인증 코드
               </label>
               <Input
@@ -94,7 +94,7 @@ export default function Login() {
                 disabled={loading}
                 autoFocus
               />
-              <p className="mt-2 text-xs text-[--color-text-muted]">
+              <p className="mt-2 text-xs text-[var(--color-text-muted)]">
                 처음 사용하는 기기입니다. 코드로 인증해 주세요.
               </p>
             </div>

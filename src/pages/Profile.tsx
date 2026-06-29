@@ -113,21 +113,21 @@ export default function Profile() {
             )}
             <div className="min-w-0 flex-1">
               {user.title && (
-                <div className="mb-0.5 text-xs font-medium text-[--color-accent]">{user.title}</div>
+                <div className="mb-0.5 text-xs font-medium text-[var(--color-accent)]">{user.title}</div>
               )}
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="shrink-0 text-[11px] font-semibold text-[--color-text-muted]">Lv.{user.level ?? 1}</span>
-                    <span className="truncate text-base font-semibold text-[--color-text]">{user.kakao_name || user.name}</span>
+                    <span className="shrink-0 text-[11px] font-semibold text-[var(--color-text-muted)]">Lv.{user.level ?? 1}</span>
+                    <span className="truncate text-base font-semibold text-[var(--color-text)]">{user.kakao_name || user.name}</span>
                   </div>
-                  <div className="text-xs text-[--color-text-muted]">@{user.name}</div>
+                  <div className="text-xs text-[var(--color-text-muted)]">@{user.name}</div>
                 </div>
                 <button
                   type="button"
                   onClick={openModal}
                   aria-label="프로필 설정"
-                  className="shrink-0 rounded-lg p-1.5 text-[--color-text-muted] transition-colors hover:bg-[--color-surface-2] hover:text-[--color-text]"
+                  className="shrink-0 rounded-lg p-1.5 text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text)]"
                 >
                   <Settings size={16} />
                 </button>
@@ -155,7 +155,7 @@ export default function Profile() {
             ))}
           </div>
 
-          <div className="pt-4 text-xs text-[--color-text-muted]" style={{ borderTop: '1px solid var(--color-border)' }}>
+          <div className="pt-4 text-xs text-[var(--color-text-muted)]" style={{ borderTop: '1px solid var(--color-border)' }}>
             채팅 {user.chat_count.toLocaleString('ko-KR')} · 가입일 {formatDate(user.created_at)}
           </div>
         </Card>
@@ -178,12 +178,12 @@ export default function Profile() {
           >
             {/* 헤더 */}
             <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
-              <h2 className="text-sm font-semibold text-[--color-text]">프로필 설정</h2>
+              <h2 className="text-sm font-semibold text-[var(--color-text)]">프로필 설정</h2>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
                 aria-label="닫기"
-                className="rounded-md p-1 text-[--color-text-muted] transition-colors hover:bg-white/[.08] hover:text-[--color-text]"
+                className="rounded-md p-1 text-[var(--color-text-muted)] transition-colors hover:bg-white/[.08] hover:text-[var(--color-text)]"
               >
                 <X size={16} />
               </button>
@@ -195,7 +195,7 @@ export default function Profile() {
               {/* 칭호 */}
               {user.titles && user.titles.length > 0 && (
                 <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
-                  <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[--color-text-muted]">대표 칭호</div>
+                  <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">대표 칭호</div>
                   <div className="overflow-hidden rounded-xl" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
                     <TitleRow
                       label="없음"
@@ -222,7 +222,7 @@ export default function Profile() {
                   <select
                     value={mbti}
                     onChange={(e) => setMbti(e.target.value)}
-                    className="w-full rounded-lg px-3 py-2 text-sm text-[--color-text] focus:outline-none"
+                    className="w-full rounded-lg px-3 py-2 text-sm text-[var(--color-text)] focus:outline-none"
                     style={{
                       background: 'var(--color-surface)',
                       border: '1px solid var(--color-border)',
@@ -286,7 +286,7 @@ export default function Profile() {
             >
               <Button onClick={save} loading={saving}>저장</Button>
               {saved && (
-                <span className="flex items-center gap-1.5 text-sm text-[--color-accent]">
+                <span className="flex items-center gap-1.5 text-sm text-[var(--color-accent)]">
                   <Check size={14} />
                   저장되었습니다
                 </span>
@@ -313,10 +313,10 @@ function TitleRow({ label, selected, onClick, muted }: {
       className={cn(
         'flex w-full items-center justify-between px-4 py-3 text-sm transition-colors text-left',
         selected
-          ? 'bg-[--color-accent]/15 text-[--color-accent]'
+          ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
           : muted
-            ? 'text-[--color-text-muted] hover:bg-[--color-surface-2]/50 hover:text-[--color-text]'
-            : 'text-[--color-text] hover:bg-[--color-surface-2]/50',
+            ? 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)]/50 hover:text-[var(--color-text)]'
+            : 'text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/50',
       )}
     >
       <span className={cn('font-medium', selected && 'font-semibold')}>{label}</span>
@@ -328,7 +328,7 @@ function TitleRow({ label, selected, onClick, muted }: {
 function ModalField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[--color-text-muted]">{label}</div>
+      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">{label}</div>
       {children}
     </div>
   )
@@ -337,17 +337,17 @@ function ModalField({ label, children }: { label: string; children: React.ReactN
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between text-sm">
-      <span className="text-[--color-text-muted]">{label}</span>
-      <span className="text-[--color-text]">{value}</span>
+      <span className="text-[var(--color-text-muted)]">{label}</span>
+      <span className="text-[var(--color-text)]">{value}</span>
     </div>
   )
 }
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-[--color-surface-2] p-3 text-center">
-      <div className="text-xs text-[--color-text-muted]">{label}</div>
-      <div className="mt-0.5 text-sm font-semibold text-[--color-text]">{value}</div>
+    <div className="rounded-lg bg-[var(--color-surface-2)] p-3 text-center">
+      <div className="text-xs text-[var(--color-text-muted)]">{label}</div>
+      <div className="mt-0.5 text-sm font-semibold text-[var(--color-text)]">{value}</div>
     </div>
   )
 }

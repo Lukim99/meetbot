@@ -14,7 +14,7 @@ export function PageHeader({
 }) {
   return (
     <div className="mb-7 flex items-center justify-between gap-3">
-      <h1 className="min-w-0 truncate text-xl font-bold tracking-tight text-[--color-text]">
+      <h1 className="min-w-0 truncate text-xl font-bold tracking-tight text-[var(--color-text)]">
         {title}
       </h1>
       {actions && <div className="shrink-0">{actions}</div>}

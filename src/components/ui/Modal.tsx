@@ -22,12 +22,12 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <h2 className="text-base font-medium text-[--color-text]">{title}</h2>
+          <h2 className="text-base font-medium text-[var(--color-text)]">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="text-[--color-text-muted] hover:text-[--color-text] transition-colors cursor-pointer"
+            className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>

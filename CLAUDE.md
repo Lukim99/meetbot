@@ -64,9 +64,9 @@ body {
 | `--color-text` | `#dce4f5` | primary text |
 | `--color-text-muted` | `#6b7899` | secondary text, labels, placeholders |
 
-**Rule:** Very dark background everywhere. No light mode. Accent (#818cf8) is bright indigo — use it sparingly. Borders should feel nearly invisible but stay a neutral dark gray — never a white tint (white-on-dark hairlines read as harsh/glary). Always use `border-[--color-border]` (or `var(--color-border)` inline) for dividers, and `--color-border-strong` for hover/selected emphasis. Do NOT use `border-white/[...]` or `rgba(255,255,255,...)` for lines.
+**Rule:** Very dark background everywhere. No light mode. Accent (#818cf8) is bright indigo — use it sparingly. Borders should feel nearly invisible but stay a neutral dark gray — never a white tint (white-on-dark hairlines read as harsh/glary). Use `border-[var(--color-border)]` (or `var(--color-border)` inline) for dividers, and `--color-border-strong` for hover/selected emphasis. Do NOT use `border-white/[...]` or `rgba(255,255,255,...)` for lines.
 
-**CSS variable + background caveat:** `bg-[--color-accent]` may not generate CSS reliably in all Tailwind v4 build configurations. For critical background fills (e.g. today's date circle), prefer `style={{ backgroundColor: 'var(--color-accent)' }}` inline. Text/border/ring classes using CSS vars are fine.
+**CSS variable caveat (Tailwind v4):** The bare arbitrary-value shorthand `[--color-x]` (e.g. `border-[--color-border]`, `bg-[--color-accent]`) is UNRELIABLE in this v4 build — it can emit invalid CSS and silently fall back (a missing `border-color` falls back to `currentColor`, i.e. bright text color = white lines). Always wrap in `var()`: `border-[var(--color-border)]`, `ring-[var(--color-surface)]`, etc., or use inline `style={{ ... 'var(--color-x)' }}`. This applies to border/ring/outline/bg color utilities that reference theme vars.
 
 ### Typography
 - Font: Pretendard Variable (loaded via CSS; falls back to system-ui)

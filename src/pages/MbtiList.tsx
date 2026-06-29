@@ -62,11 +62,11 @@ export default function MbtiList() {
           {buckets.map(({ type, users }) => (
             <Card key={type} className="p-4">
               <div className="mb-3 flex items-center gap-2">
-                <span className="font-semibold text-[--color-accent]">{type}</span>
-                <span className="text-xs text-[--color-text-muted]">{users.length}</span>
+                <span className="font-semibold text-[var(--color-accent)]">{type}</span>
+                <span className="text-xs text-[var(--color-text-muted)]">{users.length}</span>
               </div>
               {users.length === 0 ? (
-                <p className="text-xs text-[--color-text-muted]">없음</p>
+                <p className="text-xs text-[var(--color-text-muted)]">없음</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {users.map((u) => (

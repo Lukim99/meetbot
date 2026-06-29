@@ -65,18 +65,18 @@ export default function WelcomeMsg() {
       <div className="max-w-2xl">
         <Card className="flex flex-col gap-5">
           <div>
-            <label className="mb-1.5 block text-xs text-[--color-text-muted]">메시지</label>
+            <label className="mb-1.5 block text-xs text-[var(--color-text-muted)]">메시지</label>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={5}
-              className="w-full resize-none rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2 text-sm text-[--color-text] placeholder:text-[--color-text-muted] focus:border-[--color-accent] focus:outline-none"
+              className="w-full resize-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
               placeholder="신규 입장 시 전송할 메시지"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs text-[--color-text-muted]">이미지</label>
+            <label className="mb-1.5 block text-xs text-[var(--color-text-muted)]">이미지</label>
             <input
               ref={fileRef}
               type="file"
@@ -89,7 +89,7 @@ export default function WelcomeMsg() {
                 <img
                   src={imageUrl}
                   alt="입장 이미지 미리보기"
-                  className="max-w-full h-auto max-h-60 rounded-lg border border-[--color-border]"
+                  className="max-w-full h-auto max-h-60 rounded-lg border border-[var(--color-border)]"
                 />
                 <button
                   type="button"
@@ -119,7 +119,7 @@ export default function WelcomeMsg() {
               저장
             </Button>
             {saved && (
-              <span className="flex items-center gap-1 text-sm text-[--color-accent]">
+              <span className="flex items-center gap-1 text-sm text-[var(--color-accent)]">
                 <Check size={16} />
                 저장되었습니다
               </span>

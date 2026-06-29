@@ -23,8 +23,8 @@ export function PCLayout() {
     cn(
       'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-150',
       isActive
-        ? 'bg-[--color-accent]/[.12] text-[--color-accent] font-medium'
-        : 'text-[--color-text-muted] hover:bg-white/[.04] hover:text-[--color-text]',
+        ? 'bg-[var(--color-accent)]/[.12] text-[var(--color-accent)] font-medium'
+        : 'text-[var(--color-text-muted)] hover:bg-white/[.04] hover:text-[var(--color-text)]',
     )
 
   return (
@@ -32,7 +32,7 @@ export function PCLayout() {
       <div className="flex h-full">
         {/* sidebar */}
         <aside
-          className="flex w-56 shrink-0 flex-col bg-[--color-surface]"
+          className="flex w-56 shrink-0 flex-col bg-[var(--color-surface)]"
           style={{ borderRight: '1px solid var(--color-border)' }}
         >
           {/* logo */}
@@ -46,7 +46,7 @@ export function PCLayout() {
             >
               <Bot size={14} className="text-white" />
             </div>
-            <span className="text-sm font-semibold tracking-tight text-[--color-text]">모임봇</span>
+            <span className="text-sm font-semibold tracking-tight text-[var(--color-text)]">모임봇</span>
           </div>
 
           {/* nav */}
@@ -76,17 +76,17 @@ export function PCLayout() {
             <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
               <div className="relative shrink-0">
                 {user?.profile_image ? (
-                  <img src={user.profile_image} alt={user.name} className="h-8 w-8 rounded-full object-cover ring-1 ring-[--color-border]" />
+                  <img src={user.profile_image} alt={user.name} className="h-8 w-8 rounded-full object-cover ring-1 ring-[var(--color-border)]" />
                 ) : (
                   <Avatar name={user?.name ?? '?'} size={32} />
                 )}
                 {isOwner && (
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 ring-[1.5px] ring-[--color-surface]">
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 ring-[1.5px] ring-[var(--color-surface)]">
                     <Crown size={7} className="text-white" />
                   </span>
                 )}
                 {!isOwner && isAdmin && (
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-500 ring-[1.5px] ring-[--color-surface]">
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-500 ring-[1.5px] ring-[var(--color-surface)]">
                     <Crown size={7} className="text-white" />
                   </span>
                 )}
@@ -94,20 +94,20 @@ export function PCLayout() {
 
               <div className="min-w-0 flex-1">
                 {user?.title && (
-                  <div className="truncate text-[9px] font-medium text-[--color-accent]">{user.title}</div>
+                  <div className="truncate text-[9px] font-medium text-[var(--color-accent)]">{user.title}</div>
                 )}
                 <div className="flex items-center gap-1">
-                  <span className="shrink-0 text-[9px] font-semibold text-[--color-text-muted]">Lv.{user?.level ?? 1}</span>
-                  <span className="truncate text-xs font-medium text-[--color-text]">{user?.kakao_name || user?.name}</span>
+                  <span className="shrink-0 text-[9px] font-semibold text-[var(--color-text-muted)]">Lv.{user?.level ?? 1}</span>
+                  <span className="truncate text-xs font-medium text-[var(--color-text)]">{user?.kakao_name || user?.name}</span>
                 </div>
-                <div className="truncate text-[10px] text-[--color-text-muted]">@{user?.name}</div>
+                <div className="truncate text-[10px] text-[var(--color-text-muted)]">@{user?.name}</div>
               </div>
 
               <button
                 type="button"
                 onClick={onLogout}
                 aria-label="로그아웃"
-                className="shrink-0 cursor-pointer text-[--color-text-muted] transition-colors hover:text-[--color-text]"
+                className="shrink-0 cursor-pointer text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
               >
                 <LogOut size={14} />
               </button>
@@ -115,7 +115,7 @@ export function PCLayout() {
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1 overflow-y-auto bg-[--color-bg]">
+        <main className="min-w-0 flex-1 overflow-y-auto bg-[var(--color-bg)]">
           <Outlet />
         </main>
       </div>

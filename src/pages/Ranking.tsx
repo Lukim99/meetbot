@@ -59,14 +59,14 @@ export default function Ranking() {
               key={r.id}
               onClick={() => go(r.id)}
               className={cn(
-                'flex w-full items-center gap-3 rounded-xl bg-[--color-surface] p-4 text-left transition-colors hover:bg-[--color-surface-2]',
-                i === 0 && 'bg-[--color-accent]/5',
+                'flex w-full items-center gap-3 rounded-xl bg-[var(--color-surface)] p-4 text-left transition-colors hover:bg-[var(--color-surface-2)]',
+                i === 0 && 'bg-[var(--color-accent)]/5',
               )}
             >
               <RankBadge rank={i + 1} />
               <ProfileAvatar row={r} />
               <ProfileText row={r} />
-              <div className="shrink-0 text-sm font-medium text-[--color-accent]">
+              <div className="shrink-0 text-sm font-medium text-[var(--color-accent)]">
                 {r.chat_count.toLocaleString('ko-KR')}
               </div>
             </button>
@@ -74,10 +74,10 @@ export default function Ranking() {
         </div>
       ) : (
         /* PC: 테이블 레이아웃 */
-        <div className="overflow-hidden rounded-xl bg-[--color-surface]">
+        <div className="overflow-hidden rounded-xl bg-[var(--color-surface)]">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[--color-border]/60 text-xs text-[--color-text-muted]">
+              <tr className="border-b border-[var(--color-border)] text-xs text-[var(--color-text-muted)]">
                 <th className="w-20 px-5 py-3.5 text-center font-medium">순위</th>
                 <th className="px-5 py-3.5 text-left font-medium">멤버</th>
                 <th className="w-32 px-5 py-3.5 text-right font-medium">채팅 수</th>
@@ -89,9 +89,9 @@ export default function Ranking() {
                   key={r.id}
                   onClick={() => go(r.id)}
                   className={cn(
-                    'cursor-pointer transition-colors hover:bg-[--color-surface-2]',
-                    i < rows.length - 1 && 'border-b border-[--color-border]/40',
-                    i === 0 && 'bg-[--color-accent]/5',
+                    'cursor-pointer transition-colors hover:bg-[var(--color-surface-2)]',
+                    i < rows.length - 1 && 'border-b border-[var(--color-border)]',
+                    i === 0 && 'bg-[var(--color-accent)]/5',
                   )}
                 >
                   <td className="px-5 py-3">
@@ -105,7 +105,7 @@ export default function Ranking() {
                       <ProfileText row={r} />
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-right font-medium text-[--color-accent]">
+                  <td className="px-5 py-3 text-right font-medium text-[var(--color-accent)]">
                     {r.chat_count.toLocaleString('ko-KR')}
                   </td>
                 </tr>
@@ -129,12 +129,12 @@ function ProfileAvatar({ row }: { row: RankRow }) {
         <Avatar name={row.name} size={40} />
       )}
       {isOwner && (
-        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 ring-2 ring-[--color-surface]">
+        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 ring-2 ring-[var(--color-surface)]">
           <Crown size={8} className="text-white" />
         </span>
       )}
       {!isOwner && isAdmin && (
-        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 ring-2 ring-[--color-surface]">
+        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 ring-2 ring-[var(--color-surface)]">
           <Crown size={8} className="text-white" />
         </span>
       )}
@@ -146,17 +146,17 @@ function ProfileText({ row }: { row: RankRow }) {
   return (
     <div className="min-w-0 flex-1">
       {row.title && (
-        <div className="truncate text-[10px] font-medium text-[--color-accent]">{row.title}</div>
+        <div className="truncate text-[10px] font-medium text-[var(--color-accent)]">{row.title}</div>
       )}
       <div className="flex items-center gap-1.5">
-        <span className="shrink-0 text-[10px] font-semibold text-[--color-text-muted]">
+        <span className="shrink-0 text-[10px] font-semibold text-[var(--color-text-muted)]">
           Lv.{row.level ?? 1}
         </span>
-        <span className="truncate font-medium text-[--color-text]">
+        <span className="truncate font-medium text-[var(--color-text)]">
           {row.kakao_name || row.name}
         </span>
       </div>
-      <div className="truncate text-xs text-[--color-text-muted]">@{row.name}</div>
+      <div className="truncate text-xs text-[var(--color-text-muted)]">@{row.name}</div>
     </div>
   )
 }

@@ -101,7 +101,7 @@ function DayPanel({
       />
       <div
         className={cn(
-          'fixed z-[60] bg-[--color-surface] transition-transform duration-300 ease-out',
+          'fixed z-[60] bg-[var(--color-surface)] transition-transform duration-300 ease-out',
           isMobile
             ? 'inset-x-0 bottom-0 max-h-[82vh] overflow-y-auto rounded-t-2xl'
             : 'right-0 top-0 h-full w-[22rem] overflow-y-auto shadow-2xl',
@@ -116,19 +116,19 @@ function DayPanel({
       >
         {isMobile && (
           <div className="flex justify-center pb-1 pt-3">
-            <div className="h-1 w-10 rounded-full bg-white/[.15]" />
+            <div className="h-1 w-10 rounded-full bg-[var(--color-border-strong)]" />
           </div>
         )}
 
-        <div className="sticky top-0 z-10 flex items-center justify-between bg-[--color-surface] px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
+        <div className="sticky top-0 z-10 flex items-center justify-between bg-[var(--color-surface)] px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-[--color-text-muted]">선택한 날짜</p>
-            <h2 className="mt-0.5 text-base font-semibold text-[--color-text]">{label}</h2>
+            <p className="text-[10px] uppercase tracking-widest text-[var(--color-text-muted)]">선택한 날짜</p>
+            <h2 className="mt-0.5 text-base font-semibold text-[var(--color-text)]">{label}</h2>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={onAdd}
-              className="flex items-center gap-1.5 rounded-lg border border-[--color-accent]/50 px-2.5 py-1.5 text-xs text-[--color-accent] transition-colors hover:bg-[--color-accent]/10"
+              className="flex items-center gap-1.5 rounded-lg border border-[var(--color-accent)]/50 px-2.5 py-1.5 text-xs text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)]/10"
             >
               <Plus size={11} />
               일정 추가
@@ -136,7 +136,7 @@ function DayPanel({
             <button
               onClick={onClose}
               aria-label="닫기"
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-[--color-text-muted] transition-colors hover:bg-[--color-surface-2]"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-2)]"
             >
               <X size={16} />
             </button>
@@ -152,17 +152,17 @@ function DayPanel({
               <Cake size={15} className="shrink-0 text-amber-400/80" />
               <div className="min-w-0">
                 <p className="text-xs font-medium text-amber-400/90">오늘 생일 🎂</p>
-                <p className="truncate text-xs text-[--color-text-muted]">{birthdayNames.join(', ')}</p>
+                <p className="truncate text-xs text-[var(--color-text-muted)]">{birthdayNames.join(', ')}</p>
               </div>
             </div>
           )}
 
           {meetings.length === 0 && (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[--color-surface-2]">
-                <CalendarDays size={22} className="text-[--color-text-muted]" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-surface-2)]">
+                <CalendarDays size={22} className="text-[var(--color-text-muted)]" />
               </div>
-              <p className="text-sm text-[--color-text-muted]">이 날 등록된 일정이 없습니다</p>
+              <p className="text-sm text-[var(--color-text-muted)]">이 날 등록된 일정이 없습니다</p>
             </div>
           )}
 
@@ -175,11 +175,11 @@ function DayPanel({
             const isFull = mtg.max_members != null && count >= mtg.max_members
 
             return (
-              <div key={mtg.id} className="rounded-xl bg-[--color-surface-2] p-4" style={{ border: '1px solid var(--color-border)' }}>
+              <div key={mtg.id} className="rounded-xl bg-[var(--color-surface-2)] p-4" style={{ border: '1px solid var(--color-border)' }}>
                 <div className="mb-2 flex items-start justify-between gap-2">
                   <button
                     onClick={() => onGo(mtg.id)}
-                    className="min-w-0 text-left text-sm font-medium text-[--color-text] transition-colors hover:text-[--color-accent]"
+                    className="min-w-0 text-left text-sm font-medium text-[var(--color-text)] transition-colors hover:text-[var(--color-accent)]"
                   >
                     {mtg.name}
                   </button>
@@ -188,14 +188,14 @@ function DayPanel({
                       <button
                         onClick={() => onEdit(mtg)}
                         aria-label="수정"
-                        className="rounded p-1 text-[--color-text-muted] transition-colors hover:bg-[--color-surface] hover:text-[--color-accent]"
+                        className="rounded p-1 text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface)] hover:text-[var(--color-accent)]"
                       >
                         <Edit2 size={12} />
                       </button>
                       <button
                         onClick={() => onDelete(mtg.id)}
                         aria-label="삭제"
-                        className="rounded p-1 text-[--color-text-muted] transition-colors hover:bg-red-500/10 hover:text-red-400"
+                        className="rounded p-1 text-[var(--color-text-muted)] transition-colors hover:bg-red-500/10 hover:text-red-400"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -204,13 +204,13 @@ function DayPanel({
                 </div>
 
                 {mtg.start_time && (
-                  <div className="mb-1.5 flex items-center gap-1.5 text-xs text-[--color-text-muted]">
+                  <div className="mb-1.5 flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
                     <Clock size={11} />
                     {formatTimeRange(mtg)}
                   </div>
                 )}
 
-                <div className="mb-3 flex items-center gap-1.5 text-xs text-[--color-text-muted]">
+                <div className="mb-3 flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
                   <Users size={11} />
                   {count}명 참가
                   {mtg.max_members ? ` / 최대 ${mtg.max_members}명` : ''}
@@ -218,7 +218,7 @@ function DayPanel({
                 </div>
 
                 {mtg.deadline && (
-                  <p className={cn('mb-3 text-xs', isPastDeadline ? 'text-red-400' : 'text-[--color-text-muted]')}>
+                  <p className={cn('mb-3 text-xs', isPastDeadline ? 'text-red-400' : 'text-[var(--color-text-muted)]')}>
                     마감{' '}
                     {isPastDeadline
                       ? '(마감됨)'
@@ -234,18 +234,18 @@ function DayPanel({
                 {isJoined ? (
                   <button
                     onClick={() => onLeave(mtg.id)}
-                    className="w-full rounded-lg border border-[--color-border] py-1.5 text-xs text-[--color-text-muted] transition-colors hover:border-red-800/60 hover:text-red-400"
+                    className="w-full rounded-lg border border-[var(--color-border)] py-1.5 text-xs text-[var(--color-text-muted)] transition-colors hover:border-red-800/60 hover:text-red-400"
                   >
                     참가 취소
                   </button>
                 ) : isPastDeadline || isFull ? (
-                  <div className="w-full rounded-lg bg-[--color-surface] py-1.5 text-center text-xs text-[--color-text-muted]">
+                  <div className="w-full rounded-lg bg-[var(--color-surface)] py-1.5 text-center text-xs text-[var(--color-text-muted)]">
                     {isPastDeadline ? '참가 마감' : '인원 마감'}
                   </div>
                 ) : (
                   <button
                     onClick={() => onJoin(mtg.id)}
-                    className="w-full rounded-lg border border-[--color-accent]/50 py-1.5 text-xs font-medium text-[--color-accent] transition-colors hover:bg-[--color-accent]/10"
+                    className="w-full rounded-lg border border-[var(--color-accent)]/50 py-1.5 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)]/10"
                   >
                     참가하기
                   </button>
@@ -507,18 +507,18 @@ export default function Meetings() {
               type="button"
               onClick={prevMonth}
               aria-label="이전 달"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-[--color-text-muted] transition-colors hover:bg-[--color-surface] hover:text-[--color-text]"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface)] hover:text-[var(--color-text)]"
             >
               <ChevronLeft size={16} />
             </button>
-            <span className="w-28 text-center text-sm font-semibold text-[--color-text]">
+            <span className="w-28 text-center text-sm font-semibold text-[var(--color-text)]">
               {year}년 {month + 1}월
             </span>
             <button
               type="button"
               onClick={nextMonth}
               aria-label="다음 달"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-[--color-text-muted] transition-colors hover:bg-[--color-surface] hover:text-[--color-text]"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface)] hover:text-[var(--color-text)]"
             >
               <ChevronRight size={16} />
             </button>
@@ -531,7 +531,7 @@ export default function Meetings() {
                 key={d}
                 className={cn(
                   'pb-2 text-center text-[11px] font-medium',
-                  i === 0 ? 'text-red-400/50' : i === 6 ? 'text-blue-400/50' : 'text-[--color-text-muted]/50',
+                  i === 0 ? 'text-red-400/50' : i === 6 ? 'text-blue-400/50' : 'text-[var(--color-text-muted)]/50',
                 )}
               >
                 {d}
@@ -603,11 +603,11 @@ export default function Meetings() {
                         className={cn(
                           'relative z-10 flex h-full w-full items-center justify-center rounded-full text-sm font-medium transition-colors',
                           isToday && 'font-semibold text-white',
-                          !isToday && isSelected && 'border-2 border-[--color-accent] text-[--color-accent]',
-                          !isToday && !isSelected && isCurrentMonth && 'hover:bg-[--color-surface-2]',
+                          !isToday && isSelected && 'border-2 border-[var(--color-accent)] text-[var(--color-accent)]',
+                          !isToday && !isSelected && isCurrentMonth && 'hover:bg-[var(--color-surface-2)]',
                           !isToday && !isSelected && dow === 0 && 'text-red-400',
                           !isToday && !isSelected && dow === 6 && 'text-blue-400',
-                          !isToday && !isSelected && dow !== 0 && dow !== 6 && 'text-[--color-text]',
+                          !isToday && !isSelected && dow !== 0 && dow !== 6 && 'text-[var(--color-text)]',
                         )}
                         style={isToday ? { backgroundColor: 'var(--color-accent)' } : undefined}
                       >

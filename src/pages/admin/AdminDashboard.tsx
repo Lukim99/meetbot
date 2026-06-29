@@ -63,7 +63,7 @@ export default function AdminDashboard() {
             <StatCard label="전체 모임 수" value={stats.meetings} />
           </div>
 
-          <h2 className="mb-3 mt-8 text-base font-medium text-[--color-text]">관리 기능</h2>
+          <h2 className="mb-3 mt-8 text-base font-medium text-[var(--color-text)]">관리 기능</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <NavCard
               icon={MessageSquare}
@@ -99,8 +99,8 @@ export default function AdminDashboard() {
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
     <Card>
-      <div className="text-xs text-[--color-text-muted]">{label}</div>
-      <div className="mt-1 text-2xl font-semibold text-[--color-text]">
+      <div className="text-xs text-[var(--color-text-muted)]">{label}</div>
+      <div className="mt-1 text-2xl font-semibold text-[var(--color-text)]">
         {value.toLocaleString('ko-KR')}
       </div>
     </Card>
@@ -120,15 +120,15 @@ function NavCard({
 }) {
   return (
     <button onClick={onClick} className="text-left">
-      <Card className="flex items-center gap-3 transition-colors hover:bg-[--color-surface-2]">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[--color-accent]/10 text-[--color-accent]">
+      <Card className="flex items-center gap-3 transition-colors hover:bg-[var(--color-surface-2)]">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
           <Icon size={20} />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="font-medium text-[--color-text]">{title}</div>
-          <div className="truncate text-xs text-[--color-text-muted]">{desc}</div>
+          <div className="font-medium text-[var(--color-text)]">{title}</div>
+          <div className="truncate text-xs text-[var(--color-text-muted)]">{desc}</div>
         </div>
-        <ChevronRight size={18} className="shrink-0 text-[--color-text-muted]" />
+        <ChevronRight size={18} className="shrink-0 text-[var(--color-text-muted)]" />
       </Card>
     </button>
   )

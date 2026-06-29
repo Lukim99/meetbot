@@ -30,13 +30,13 @@ export function MobileLayout() {
                 <div
                   className={cn(
                     'flex flex-1 flex-col items-center justify-center gap-1 py-2 transition-colors',
-                    isActive ? 'text-[--color-accent]' : 'text-[--color-text-muted]',
+                    isActive ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]',
                   )}
                 >
                   <span
                     className={cn(
                       'flex h-7 w-12 items-center justify-center rounded-full transition-all duration-200',
-                      isActive && 'bg-[--color-accent]/[.12]',
+                      isActive && 'bg-[var(--color-accent)]/[.12]',
                     )}
                   >
                     <Icon size={20} />

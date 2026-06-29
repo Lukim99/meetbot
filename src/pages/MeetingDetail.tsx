@@ -180,7 +180,7 @@ export default function MeetingDetail() {
     <Page>
       <button
         onClick={() => navigate(isMobile ? '/m/meetings' : '/meetings')}
-        className="mb-4 flex items-center gap-1.5 text-sm text-[--color-text-muted] transition-colors hover:text-[--color-text]"
+        className="mb-4 flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
       >
         <ArrowLeft size={16} />
         일정 목록
@@ -189,14 +189,14 @@ export default function MeetingDetail() {
       {/* header */}
       <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-semibold text-[--color-text]">{meeting.name}</h1>
+          <h1 className="text-xl font-semibold text-[var(--color-text)]">{meeting.name}</h1>
           {meeting.settled ? <Badge tone="success">정산완료</Badge> : <Badge tone="warning">미정산</Badge>}
         </div>
         {canEdit && (
           <div className="flex items-center gap-2">
             <button
               onClick={() => setEditOpen(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-[--color-border] px-3 py-1.5 text-xs text-[--color-text-muted] transition-colors hover:border-[--color-accent]/50 hover:text-[--color-accent]"
+              className="flex items-center gap-1.5 rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-accent)]/50 hover:text-[var(--color-accent)]"
             >
               <Edit2 size={12} />
               수정
@@ -213,13 +213,13 @@ export default function MeetingDetail() {
       </div>
 
       {/* meta info */}
-      <div className="mb-1 flex items-center gap-1.5 text-sm text-[--color-text-muted]">
+      <div className="mb-1 flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
         <Clock size={13} />
         {formatTimeRange(meeting)}
       </div>
 
       {(meeting.min_members || meeting.max_members) && (
-        <div className="mb-1 flex items-center gap-1.5 text-sm text-[--color-text-muted]">
+        <div className="mb-1 flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
           <Users size={13} />
           {[
             meeting.min_members ? `최소 ${meeting.min_members}명` : '',
@@ -231,7 +231,7 @@ export default function MeetingDetail() {
       )}
 
       {meeting.deadline && (
-        <p className={cn('mb-1 text-sm', isPastDeadline ? 'text-red-400' : 'text-[--color-text-muted]')}>
+        <p className={cn('mb-1 text-sm', isPastDeadline ? 'text-red-400' : 'text-[var(--color-text-muted)]')}>
           참가 마감{isPastDeadline ? ' (마감됨)' : ''}: {' '}
           {new Date(meeting.deadline).toLocaleDateString('ko-KR', {
             month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -240,7 +240,7 @@ export default function MeetingDetail() {
       )}
 
       {meeting.description && (
-        <p className="mt-1 mb-4 text-sm text-[--color-text]">{meeting.description}</p>
+        <p className="mt-1 mb-4 text-sm text-[var(--color-text)]">{meeting.description}</p>
       )}
 
       {/* join / leave */}
@@ -248,18 +248,18 @@ export default function MeetingDetail() {
         {isJoined ? (
           <button
             onClick={leaveMeeting}
-            className="rounded-lg border border-[--color-border] px-4 py-2 text-sm text-[--color-text-muted] transition-colors hover:border-red-800/60 hover:text-red-400"
+            className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-text-muted)] transition-colors hover:border-red-800/60 hover:text-red-400"
           >
             참가 취소
           </button>
         ) : isPastDeadline || isFull ? (
-          <span className="text-sm text-[--color-text-muted]">
+          <span className="text-sm text-[var(--color-text-muted)]">
             {isPastDeadline ? '참가 마감됨' : '인원 마감됨'}
           </span>
         ) : (
           <button
             onClick={joinMeeting}
-            className="rounded-lg border border-[--color-accent]/50 px-4 py-2 text-sm font-medium text-[--color-accent] transition-colors hover:bg-[--color-accent]/10"
+            className="rounded-lg border border-[var(--color-accent)]/50 px-4 py-2 text-sm font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)]/10"
           >
             참가하기
           </button>
@@ -269,7 +269,7 @@ export default function MeetingDetail() {
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* members */}
         <Card>
-          <h2 className="mb-3 text-base font-medium text-[--color-text]">
+          <h2 className="mb-3 text-base font-medium text-[var(--color-text)]">
             참여 멤버 ({members.length}{meeting.max_members ? `/${meeting.max_members}` : ''})
           </h2>
           <div className="flex flex-wrap gap-3">
@@ -277,44 +277,44 @@ export default function MeetingDetail() {
               <div key={m.id} className="flex items-center gap-2">
                 <Avatar name={m.name} size={32} />
                 <div>
-                  <span className="text-sm text-[--color-text]">{m.name}</span>
+                  <span className="text-sm text-[var(--color-text)]">{m.name}</span>
                   {m.id === meeting.host_id && (
-                    <span className="ml-1.5 text-xs text-[--color-accent]">모임장</span>
+                    <span className="ml-1.5 text-xs text-[var(--color-accent)]">모임장</span>
                   )}
                 </div>
               </div>
             ))}
             {members.length === 0 && (
-              <p className="text-sm text-[--color-text-muted]">아직 참가자가 없습니다</p>
+              <p className="text-sm text-[var(--color-text-muted)]">아직 참가자가 없습니다</p>
             )}
           </div>
         </Card>
 
         {/* settlement items */}
         <Card>
-          <h2 className="mb-3 text-base font-medium text-[--color-text]">정산 항목</h2>
+          <h2 className="mb-3 text-base font-medium text-[var(--color-text)]">정산 항목</h2>
           <div className="flex flex-col gap-2">
             {items.map((it) => (
               <div
                 key={it.id}
-                className="flex items-center gap-3 rounded-lg bg-[--color-surface-2] px-3 py-2"
+                className="flex items-center gap-3 rounded-lg bg-[var(--color-surface-2)] px-3 py-2"
               >
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm text-[--color-text]">{it.label}</div>
-                  <div className="text-xs text-[--color-text-muted]">{nameOf(it.payer_id)} 지불</div>
+                  <div className="truncate text-sm text-[var(--color-text)]">{it.label}</div>
+                  <div className="text-xs text-[var(--color-text-muted)]">{nameOf(it.payer_id)} 지불</div>
                 </div>
-                <span className="shrink-0 text-sm text-[--color-text]">{formatWon(it.amount)}</span>
+                <span className="shrink-0 text-sm text-[var(--color-text)]">{formatWon(it.amount)}</span>
                 <button
                   onClick={() => removeItem(it.id)}
                   aria-label="항목 삭제"
-                  className="shrink-0 text-[--color-text-muted] hover:text-red-400"
+                  className="shrink-0 text-[var(--color-text-muted)] hover:text-red-400"
                 >
                   <Trash2 size={14} />
                 </button>
               </div>
             ))}
             {items.length === 0 && (
-              <p className="text-sm text-[--color-text-muted]">항목이 없습니다</p>
+              <p className="text-sm text-[var(--color-text-muted)]">항목이 없습니다</p>
             )}
           </div>
 
@@ -335,7 +335,7 @@ export default function MeetingDetail() {
             <select
               value={payer}
               onChange={(e) => setPayer(e.target.value)}
-              className="rounded-lg border border-[--color-border] bg-[--color-surface-2] px-3 py-2 text-sm text-[--color-text] focus:border-[--color-accent] focus:outline-none sm:w-32"
+              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none sm:w-32"
             >
               <option value="">공동 (1/N)</option>
               {members.map((m) => (
@@ -351,28 +351,28 @@ export default function MeetingDetail() {
 
       {/* settlement summary */}
       <Card className="mt-5">
-        <h2 className="mb-3 text-base font-medium text-[--color-text]">정산 요약</h2>
+        <h2 className="mb-3 text-base font-medium text-[var(--color-text)]">정산 요약</h2>
         <div className="mb-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
-          <span className="text-[--color-text-muted]">
-            총액 <span className="text-[--color-text]">{formatWon(settlement.total)}</span>
+          <span className="text-[var(--color-text-muted)]">
+            총액 <span className="text-[var(--color-text)]">{formatWon(settlement.total)}</span>
           </span>
-          <span className="text-[--color-text-muted]">
-            1인당 <span className="text-[--color-text]">{formatWon(settlement.perHead)}</span>
+          <span className="text-[var(--color-text-muted)]">
+            1인당 <span className="text-[var(--color-text)]">{formatWon(settlement.perHead)}</span>
           </span>
         </div>
         {settlement.transfers.length === 0 ? (
-          <p className="text-sm text-[--color-text-muted]">정산할 내역이 없습니다</p>
+          <p className="text-sm text-[var(--color-text-muted)]">정산할 내역이 없습니다</p>
         ) : (
           <div className="flex flex-col gap-2">
             {settlement.transfers.map((t, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 rounded-lg bg-[--color-surface-2] px-3 py-2 text-sm"
+                className="flex items-center gap-2 rounded-lg bg-[var(--color-surface-2)] px-3 py-2 text-sm"
               >
-                <span className="font-medium text-[--color-text]">{nameOf(t.from)}</span>
-                <span className="text-[--color-text-muted]">→</span>
-                <span className="font-medium text-[--color-text]">{nameOf(t.to)}</span>
-                <span className="ml-auto text-[--color-accent]">{formatWon(t.amount)}</span>
+                <span className="font-medium text-[var(--color-text)]">{nameOf(t.from)}</span>
+                <span className="text-[var(--color-text-muted)]">→</span>
+                <span className="font-medium text-[var(--color-text)]">{nameOf(t.to)}</span>
+                <span className="ml-auto text-[var(--color-accent)]">{formatWon(t.amount)}</span>
               </div>
             ))}
           </div>

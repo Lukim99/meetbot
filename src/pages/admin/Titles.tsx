@@ -76,14 +76,14 @@ export default function Titles() {
             {titles.map((t) => (
               <div
                 key={t.id}
-                className="flex items-center justify-between rounded-lg bg-[--color-surface] px-4 py-3"
+                className="flex items-center justify-between rounded-lg bg-[var(--color-surface)] px-4 py-3"
               >
-                <span className="text-sm text-[--color-text]">{t.name}</span>
+                <span className="text-sm text-[var(--color-text)]">{t.name}</span>
                 <button
                   type="button"
                   onClick={() => remove(t.id)}
                   aria-label={`${t.name} 삭제`}
-                  className="rounded-md p-1.5 text-[--color-text-muted] transition-colors hover:bg-red-500/10 hover:text-red-400"
+                  className="rounded-md p-1.5 text-[var(--color-text-muted)] transition-colors hover:bg-red-500/10 hover:text-red-400"
                 >
                   <Trash2 size={15} />
                 </button>

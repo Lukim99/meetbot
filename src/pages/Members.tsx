@@ -94,8 +94,8 @@ export default function Members() {
             className={cn(
               'shrink-0 rounded-full border px-3 py-1 text-xs transition-colors',
               mbtiFilter === t
-                ? 'border-[--color-accent] bg-[--color-accent]/10 text-[--color-accent]'
-                : 'border-[--color-border] text-[--color-text-muted] hover:text-[--color-text]',
+                ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
+                : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]',
             )}
           >
             {t}
@@ -120,7 +120,7 @@ export default function Members() {
               <button
                 key={r.id}
                 onClick={() => go(r.id)}
-                className="flex items-center gap-3 rounded-xl bg-[--color-surface] p-4 text-left transition-colors hover:bg-[--color-surface-2]"
+                className="flex items-center gap-3 rounded-xl bg-[var(--color-surface)] p-4 text-left transition-colors hover:bg-[var(--color-surface-2)]"
               >
                 {/* 프로필 이미지 + 권한 뱃지 */}
                 <div className="relative shrink-0">
@@ -134,12 +134,12 @@ export default function Members() {
                     <Avatar name={r.name} size={44} />
                   )}
                   {isTargetOwner && (
-                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 ring-2 ring-[--color-surface]">
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 ring-2 ring-[var(--color-surface)]">
                       <Crown size={8} className="text-white" />
                     </span>
                   )}
                   {!isTargetOwner && isTargetAdmin && (
-                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 ring-2 ring-[--color-surface]">
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 ring-2 ring-[var(--color-surface)]">
                       <Crown size={8} className="text-white" />
                     </span>
                   )}
@@ -148,19 +148,19 @@ export default function Members() {
                 {/* 텍스트 정보 */}
                 <div className="min-w-0 flex-1">
                   {r.title ? (
-                    <div className="truncate text-[10px] font-medium text-[--color-accent]">
+                    <div className="truncate text-[10px] font-medium text-[var(--color-accent)]">
                       {r.title}
                     </div>
                   ) : null}
                   <div className="flex items-center gap-1.5">
-                    <span className="shrink-0 text-[10px] font-semibold text-[--color-text-muted]">
+                    <span className="shrink-0 text-[10px] font-semibold text-[var(--color-text-muted)]">
                       Lv.{r.level ?? 1}
                     </span>
-                    <span className="truncate font-medium text-[--color-text]">
+                    <span className="truncate font-medium text-[var(--color-text)]">
                       {r.kakao_name || r.name}
                     </span>
                   </div>
-                  <div className="truncate text-xs text-[--color-text-muted]">@{r.name}</div>
+                  <div className="truncate text-xs text-[var(--color-text-muted)]">@{r.name}</div>
                 </div>
 
                 {/* 관리자 임명/해임 버튼 (소유자 전용) */}
@@ -174,7 +174,7 @@ export default function Members() {
                       'shrink-0 rounded-lg p-1.5 transition-colors disabled:opacity-50',
                       isTargetAdmin
                         ? 'text-blue-400 hover:bg-blue-500/10'
-                        : 'text-[--color-text-muted] hover:bg-[--color-surface-2] hover:text-[--color-text]',
+                        : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text)]',
                     )}
                   >
                     <Crown size={15} />
